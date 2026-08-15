@@ -709,26 +709,6 @@
       }
     } catch(err){}
 
-    // Live sync directly from official GitHub REST API for instant real-time events today
-    try {
-      const evRes = await fetch(`https://api.github.com/users/${username}/events/public?per_page=100&_=${Date.now()}`);
-      if (evRes.ok) {
-        const events = await evRes.json();
-        events.forEach(ev => {
-          const dStr = ev.created_at.split('T')[0];
-          let cnt = (ev.type === 'PushEvent' && ev.payload && ev.payload.commits) ? ev.payload.commits.length : 1;
-          if (!commitMap[dStr] || commitMap[dStr] === 0) {
-            commitMap[dStr] = cnt;
-            totalCount += cnt;
-          }
-        });
-      }
-    } catch(e){}
-
-    const todayStr = new Date().toISOString().split('T')[0];
-    if (!commitMap[todayStr]) {
-      commitMap[todayStr] = 1;
-    }
     totalCount = Object.values(commitMap).reduce((a, b) => a + b, 0);
 
     if (countLabel) {
@@ -760,18 +740,27 @@
       svg += `<text x="${x}" y="12">${m}</text>`;
     });
 
-    let curDate = new Date();
-    curDate.setDate(curDate.getDate() - (cols * 7));
+    // Calculate start date starting exactly Sunday of 52 weeks ago so today falls in the rightmost column
+    const today = new Date();
+    const dayOfWeek = today.getDay(); // 0 is Sun, 1 is Mon...
+    let startDate = new Date(today);
+    startDate.setDate(today.getDate() - (51 * 7 + dayOfWeek));
+
+    let curDate = new Date(startDate);
 
     // SIGNATURE PORTFOLIO TEAL COLOR PALETTE:
-    // Empty: #1c2029
+    // Empty: rgba(255, 255, 255, 0.07)
     // Level 1: #123F34 (Deep forest teal)
     // Level 2: #1F6F5C (Classic teal)
     // Level 3: #2dd4bf (Mint teal)
     // Level 4: #7FD9BE (Vibrant light mint)
     for (let c = 0; c < cols; c++) {
       for (let r = 0; r < rows; r++) {
-        const dStr = curDate.toISOString().split('T')[0];
+        // Use local date string YYYY-MM-DD
+        const yyyy = curDate.getFullYear();
+        const mm = String(curDate.getMonth() + 1).padStart(2, '0');
+        const dd = String(curDate.getDate()).padStart(2, '0');
+        const dStr = `${yyyy}-${mm}-${dd}`;
         const count = commitMap[dStr] || 0;
         
         let color = "rgba(255, 255, 255, 0.07)"; // crisp visible empty square box
