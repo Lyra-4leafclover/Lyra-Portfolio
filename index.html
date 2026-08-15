@@ -607,6 +607,7 @@
         <h3>6. Tool of the Week</h3>
         <p>This week's interesting discovery was <strong style="color:var(--teal);">OmniRoute</strong>.</p>
         <p>OmniRoute is an open-source AI gateway that connects different AI coding tools and model providers through a single endpoint. Instead of configuring every AI tool separately, OmniRoute handles everything in the background and routes requests to whichever provider you're using.</p>
+        <p>One feature I thought was really cool is that it supports tools like Cursor, Claude Code, Copilot, Codex and Cline, while also automatically switching providers if one becomes unavailable or reaches its limits. It also includes features like smart routing and token compression, which makes it a pretty useful project if you regularly work with AI coding assistants.</p>
 
         <figure>
           <img src="assets2/omniroutepic1.jpg" alt="OmniRoute Gateway Setup">
@@ -616,6 +617,9 @@
           <img src="assets2/omniroutepic2.jpg" alt="OmniRoute Multi-Model Routing">
           <figcaption>Figure 2: OmniRoute Provider Routing &amp; Token Management</figcaption>
         </figure>
+
+        <p>I'll probably spend some more time experimenting with it over the next week.</p>
+        <p style="margin-top:16px;font-weight:bold;color:var(--teal);">That's pretty much how this week went. It wasn't as project-heavy as last week, but I got a much better understanding of machine learning, learnt a new tool, discovered another useful open-source project, and started planning what will probably become my biggest IoT project so far.</p>
       `
     },
     {
@@ -636,20 +640,75 @@
           <figcaption>Figure 1: Tkinter Red Panda Image Question Popup &amp; Console Output</figcaption>
         </figure>
 
+        <p>I used Tkinter and PIL so that whenever an image question pops up (like identifying an animal), a separate window opens with the picture, and then closes when you move on. I also added a simple hint trigger.</p>
+        <p>Here’s how I handled opening the image popups:</p>
+
+        <pre style="background:var(--code-bg);border:1px solid var(--code-line);padding:14px;border-radius:8px;overflow-x:auto;color:#7FD9BE;font-family:'JetBrains Mono',monospace;font-size:13px;margin:12px 0;"><code>def show_image_window(image_path):
+    if not os.path.exists(image_path):
+        print(f"⚠️ Warning: Could not find image file '{image_path}'. Skipping image display.")
+        return None
+
+    img_window = tk.Toplevel()
+    img_window.title("Question Image")
+    
+    raw_img = Image.open(image_path)
+    raw_img.thumbnail((300, 300))
+    quiz_img = ImageTk.PhotoImage(raw_img)
+    
+    img_label = tk.Label(img_window, image=quiz_img)
+    img_label.image = quiz_img  # Reference to avoid garbage collection
+    img_label.pack(padx=10, pady=10)
+    
+    img_window.update()
+    return img_window</code></pre>
+
+        <p>It was fun seeing how differently both of us built the exact same thing on Sunday. Next week we’re making a typing speed tester.</p>
+
         <h3>2. IoT Expothon: Phantom Gate</h3>
         <p>I’m also working on an IoT Expothon project called <strong style="color:var(--teal);">Phantom Gate – AI-Based Smart Industrial Safety &amp; Access Control System</strong>.</p>
-        <p>It’s essentially a tabletop maze setup where judges turn a rotary encoder to move a payload through a grid. The catch is that the grid has invisible optical beam sensors.</p>
+        <p>It’s essentially a tabletop maze setup where judges turn a rotary encoder to move a payload through a grid. The catch is that the grid has invisible optical beam sensors. If someone breaks a beam, the system:</p>
+
+        <ul style="padding-left:24px;margin:10px 0;line-height:1.8;color:var(--ink-soft);">
+          <li>Triggers an emergency E-STOP</li>
+          <li>Snaps a photo of their face</li>
+          <li>Plays a voice alert ("INTRUDER DETECTED")</li>
+          <li>Sends an emergency SMS to a phone</li>
+        </ul>
+
+        <p>There's a lot of hardware and sensor logic involved, but it's going to be cool to test out physically.</p>
 
         <h3>3. Capstone Project: Document Reassembly with OpenCV</h3>
-        <p>I also built a capstone project focused on automated document reassembly using OpenCV and computer vision.</p>
+        <p>I also built a capstone project focused on automated document reassembly using OpenCV and computer vision. The idea is simple but tricky in practice: if you feed it images of shredded paper strips, jigsaw pieces of a document, or torn receipts, the system analyzes the edges, contours, and text/line continuations to piece them back together into the original document. It was a really fun challenge working through the image processing pipeline and matching logic to get the fragments aligning correctly.</p>
+
+        <figure>
+          <img src="assets2/post1_opencv_shreds.png" alt="OpenCV Shredded Paper Strips Processing">
+          <figcaption>Figure 2: OpenCV Shredded Paper Strips Processing</figcaption>
+        </figure>
         <figure>
           <img src="assets2/post1_opencv_reassembled.png" alt="OpenCV Reassembled Classified Document">
           <figcaption>Figure 3: OpenCV Reassembled Classified Document</figcaption>
         </figure>
+        <figure>
+          <img src="assets2/post1_opencv_jigsaw.png" alt="OpenCV Torn Scenery Strips Jigsaw Reassembly">
+          <figcaption>Figure 4: OpenCV Torn Scenery Strips Jigsaw Reassembly</figcaption>
+        </figure>
 
         <h3>4. LeetCode SQL &amp; BFS</h3>
-        <p><strong style="color:var(--teal);">MySQL on LeetCode:</strong> I just realized LeetCode has dedicated MySQL problem sets!</p>
-        <p><strong style="color:var(--teal);">Graph Algorithms (BFS):</strong> I spent time mastering the theory and code for Breadth-First Search (BFS).</p>
+        <p><strong style="color:var(--teal);">MySQL on LeetCode:</strong> I just realized LeetCode has dedicated MySQL problem sets! Diving straight into database queries alongside standard DSA problems is going to make practicing SQL so much more structured.</p>
+        <p><strong style="color:var(--teal);">Graph Algorithms (BFS):</strong> I spent time mastering the theory and code for Breadth-First Search (BFS). Understanding queue-based level-order traversal opens up so many pathfinding possibilities, and I’m ready to start applying it to graph-based problems soon.</p>
+
+        <h3>5. Course Realities &amp; Cool Finds</h3>
+        <p><strong style="color:var(--teal);">Pivot on NPTEL:</strong> I started my NPTEL coursework this week, but to be completely honest, the lectures aren't landing well for me. Instead of slogging through material that isn't sticking, I’m taking full ownership of my learning path and switching to curated self-study resources.</p>
+
+        <h3>6. Tool of the Week</h3>
+        <p>I stumbled upon <strong style="color:var(--teal);">Chai Visual</strong> ("Learn CS by watching it move"). Watching data structures, pointers, and memory step through frame-by-frame makes complex algorithm logic click instantly. Highly recommended if you're a visual learner.</p>
+
+        <figure>
+          <img src="assets2/post1_chai_visual.png" alt="Chai Visual Step-by-Step Algorithm Visualization">
+          <figcaption>Figure 5: Chai Visual Step-by-Step Algorithm Visualization</figcaption>
+        </figure>
+
+        <p style="margin-top:16px;font-weight:bold;color:var(--teal);">Onward to next week's typing speed build and Phantom Gate prototyping!</p>
       `
     }
   ];
