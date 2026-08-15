@@ -728,11 +728,12 @@
         const dStr = curDate.toISOString().split('T')[0];
         const count = commitMap[dStr] || 0;
         
-        let color = "#1c2029"; // empty square
-        if (count >= 5) color = "#7FD9BE";
-        else if (count >= 3) color = "#2dd4bf";
-        else if (count >= 2) color = "#1F6F5C";
-        else if (count >= 1) color = "#123F34";
+        let color = "rgba(255, 255, 255, 0.07)"; // crisp visible empty square box
+        let strokeColor = "rgba(255, 255, 255, 0.05)";
+        if (count >= 5) { color = "#7FD9BE"; strokeColor = "#7FD9BE"; }
+        else if (count >= 3) { color = "#2dd4bf"; strokeColor = "#2dd4bf"; }
+        else if (count >= 2) { color = "#1F6F5C"; strokeColor = "#1F6F5C"; }
+        else if (count >= 1) { color = "#123F34"; strokeColor = "#123F34"; }
 
         const formattedDate = curDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
         const tooltipText = count > 0 ? `${count} contribution${count > 1 ? 's' : ''} on ${formattedDate}` : `No contributions on ${formattedDate}`;
@@ -740,7 +741,7 @@
         const x = leftMargin + c * (boxSize + gap);
         const y = topMargin + r * (boxSize + gap);
 
-        svg += `<rect x="${x}" y="${y}" width="${boxSize}" height="${boxSize}" rx="2" fill="${color}" data-date="${dStr}" data-count="${count}"><title>${tooltipText}</title></rect>`;
+        svg += `<rect x="${x}" y="${y}" width="${boxSize}" height="${boxSize}" rx="2" fill="${color}" stroke="${strokeColor}" stroke-width="0.8" data-date="${dStr}" data-count="${count}"><title>${tooltipText}</title></rect>`;
 
         curDate.setDate(curDate.getDate() + 1);
       }
@@ -750,7 +751,7 @@
     const legendX = width - 125;
     const legendY = height - 10;
     svg += `<text x="${legendX - 28}" y="${legendY + 8}">Less</text>`;
-    svg += `<rect x="${legendX}" y="${legendY}" width="9" height="9" rx="2" fill="#1c2029"></rect>`;
+    svg += `<rect x="${legendX}" y="${legendY}" width="9" height="9" rx="2" fill="rgba(255, 255, 255, 0.07)" stroke="rgba(255, 255, 255, 0.05)"></rect>`;
     svg += `<rect x="${legendX + 13}" y="${legendY}" width="9" height="9" rx="2" fill="#123F34"></rect>`;
     svg += `<rect x="${legendX + 26}" y="${legendY}" width="9" height="9" rx="2" fill="#1F6F5C"></rect>`;
     svg += `<rect x="${legendX + 39}" y="${legendY}" width="9" height="9" rx="2" fill="#2dd4bf"></rect>`;
