@@ -122,14 +122,14 @@
   .hero-text{flex:1; min-width:260px;}
   .role-line{color:var(--teal-deep); font-family:'JetBrains Mono',monospace; font-size:14px; margin-top:10px;}
   .hero-links{display:flex; gap:10px; margin-top:22px; flex-wrap:wrap;}
-  .btn{
+  button, .btn{
     font-family:'JetBrains Mono',monospace; font-size:13px; padding:9px 14px;
     border:1px solid var(--ink); border-radius:6px; text-decoration:none;
     display:inline-flex; align-items:center; gap:6px; cursor:pointer;
     color:var(--ink);
   }
   .btn.primary{background:var(--ink); color:var(--paper);}
-  .btn.ghost{background:transparent;}
+  .btn.ghost{background:transparent; color:var(--ink) !important; border-color:var(--ink) !important;}
   .btn:hover{opacity:0.9;}
 
   /* ---------- heatmap & languages ---------- */
