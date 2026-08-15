@@ -910,19 +910,14 @@
         const repos = await res.json();
         const liveTotals = {};
         for (const repo of repos) {
-          if (!repo.fork) {
-            try {
-              const lRes = await fetch(repo.languages_url);
-              if (lRes.ok) {
-                const lData = await lRes.json();
-                for (const [l, b] of Object.entries(lData)) {
-                  liveTotals[l] = (liveTotals[l] || 0) + b;
-                }
-              }
-            } catch (err) {}
+          if (!repo.fork && repo.language) {
+            liveTotals[repo.language] = (liveTotals[repo.language] || 0) + (repo.size || 1000);
           }
         }
-        if (Object.keys(liveTotals).length > 0) langTotals = liveTotals;
+        // Only update if complete distribution with multiple languages was retrieved
+        if (Object.keys(liveTotals).length >= 3) {
+          langTotals = liveTotals;
+        }
       }
     } catch (e) {}
 
