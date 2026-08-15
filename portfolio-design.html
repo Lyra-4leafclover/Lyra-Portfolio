@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>alex.dev — portfolio</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F5F0;
+    --ink:#14181F;
+    --ink-soft:#585C63;
+    --teal:#1F6F5C;
+    --teal-deep:#123F34;
+    --amber:#D98E2B;
+    --line:#DCD9CE;
+    --code-bg:#0F1115;
+    --code-line:#262A33;
+    --paper-raised:#FFFFFE;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    line-height:1.6;
+  }
+  .mono{font-family:'JetBrains Mono',monospace;}
+  a{color:inherit;}
+
+  /* ---------- layout shell ---------- */
+  .shell{display:grid; grid-template-columns:240px 1fr; max-width:1180px; margin:0 auto; min-height:100vh;}
+  @media (max-width:860px){ .shell{grid-template-columns:1fr;} .sidebar{position:relative; height:auto;} }
+
+  /* ---------- sidebar / file tree ---------- */
+  .sidebar{
+    position:sticky; top:0; height:100vh; overflow-y:auto;
+    padding:28px 20px; border-right:1px solid var(--line);
+  }
+  .brand{font-family:'JetBrains Mono',monospace; font-weight:700; font-size:15px; margin-bottom:4px;}
+  .brand .cursor{display:inline-block; width:8px; height:14px; background:var(--teal); margin-left:2px; animation:blink 1.1s steps(1) infinite; vertical-align:-2px;}
+  @keyframes blink{50%{opacity:0;}}
+  .brand-sub{font-size:12px; color:var(--ink-soft); margin-bottom:28px;}
+
+  .tree{font-family:'JetBrains Mono',monospace; font-size:13px;}
+  .tree-item{
+    display:flex; align-items:center; gap:8px;
+    padding:7px 8px; border-radius:4px; color:var(--ink-soft);
+    text-decoration:none; cursor:pointer;
+  }
+  .tree-item:hover{background:var(--line); color:var(--ink);}
+  .tree-item.active{background:var(--teal); color:#fff;}
+  .tree-item .dot{width:6px; height:6px; border-radius:50%; background:currentColor; opacity:.5; flex-shrink:0;}
+  .tree-group-label{font-size:11px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.06em; margin:18px 0 6px 8px;}
+
+  .sidebar-foot{margin-top:32px; padding-top:16px; border-top:1px solid var(--line); font-size:12px; color:var(--ink-soft);}
+  .status-line{display:flex; align-items:center; gap:6px; margin-top:6px;}
+  .status-dot{width:7px; height:7px; border-radius:50%; background:var(--teal);}
+
+  /* ---------- main content ---------- */
+  main{padding:48px 56px 80px;}
+  @media (max-width:860px){ main{padding:32px 22px 60px;} }
+  section{padding-top:36px; margin-top:36px;}
+  section:first-child{padding-top:0; margin-top:0;}
+
+  .filepath{
+    font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--ink-soft);
+    display:flex; align-items:center; gap:8px; margin-bottom:18px;
+  }
+  .filepath .bar{flex:1; height:1px; background:var(--line);}
+
+  h1{font-family:'JetBrains Mono',monospace; font-size:38px; font-weight:700; line-height:1.25; letter-spacing:-.01em;}
+  h2{font-family:'JetBrains Mono',monospace; font-size:22px; font-weight:700; margin-bottom:6px;}
+  .section-sub{color:var(--ink-soft); font-size:14px; margin-bottom:24px;}
+
+  /* ---------- hero ---------- */
+  .hero-top{display:flex; gap:28px; align-items:flex-start; flex-wrap:wrap;}
+  .avatar{
+    width:88px; height:88px; border-radius:12px; flex-shrink:0;
+    background:linear-repeating-none;
+    background-color:var(--teal-deep);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono',monospace; color:#fff; font-size:26px; font-weight:700;
+    background-image:
+      repeating-linear-gradient(45deg, rgba(255,255,255,0.06) 0 2px, transparent 2px 10px);
+  }
+  .hero-text{flex:1; min-width:260px;}
+  .role-line{color:var(--teal-deep); font-family:'JetBrains Mono',monospace; font-size:14px; margin-top:10px;}
+  .lede{margin-top:14px; max-width:52ch; color:var(--ink-soft); font-size:15px;}
+  .hero-links{display:flex; gap:10px; margin-top:22px; flex-wrap:wrap;}
+  .btn{
+    font-family:'JetBrains Mono',monospace; font-size:13px; padding:9px 14px;
+    border:1px solid var(--ink); border-radius:6px; text-decoration:none;
+    display:inline-flex; align-items:center; gap:6px;
+  }
+  .btn.primary{background:var(--ink); color:var(--paper);}
+  .btn.ghost{background:transparent;}
+
+  /* ---------- stats ---------- */
+  .stat-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:10px; overflow:hidden; margin-top:32px;}
+  @media (max-width:640px){ .stat-grid{grid-template-columns:repeat(2,1fr);} }
+  .stat{background:var(--paper-raised); padding:18px 16px;}
+  .stat-num{font-family:'JetBrains Mono',monospace; font-size:24px; font-weight:700; color:var(--teal-deep);}
+  .stat-label{font-size:12px; color:var(--ink-soft); margin-top:4px;}
+
+  /* ---------- heatmap ---------- */
+  .heatmap-panel{
+    background:var(--code-bg); border-radius:12px; padding:22px 24px 18px;
+    color:#DADCE2; margin-top:16px;
+  }
+  .heatmap-head{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:14px; flex-wrap:wrap; gap:8px;}
+  .heatmap-head .count{font-family:'JetBrains Mono',monospace; font-size:14px; color:#fff;}
+  .heatmap-head .range{font-size:12px; color:#8A8F98;}
+  .heatmap-grid{display:grid; grid-template-rows:repeat(7,10px); grid-auto-flow:column; gap:3px; overflow-x:auto; padding-bottom:6px;}
+  .cell{width:10px; height:10px; border-radius:2px;}
+  .streak-row{display:flex; gap:22px; margin-top:14px; flex-wrap:wrap;}
+  .streak-item{font-size:12px; color:#8A8F98;}
+  .streak-item b{color:#fff; font-family:'JetBrains Mono',monospace; font-weight:700;}
+
+  /* ---------- timeline / experience ---------- */
+  .timeline{border-left:1px solid var(--line); margin-left:6px; padding-left:26px;}
+  .t-item{position:relative; padding-bottom:26px;}
+  .t-item:last-child{padding-bottom:0;}
+  .t-item::before{content:""; position:absolute; left:-31px; top:4px; width:9px; height:9px; border-radius:50%; background:var(--amber); border:2px solid var(--paper);}
+  .t-role{font-weight:600; font-size:15px;}
+  .t-org{color:var(--teal-deep); font-size:13px; font-family:'JetBrains Mono',monospace; margin-top:2px;}
+  .t-date{color:var(--ink-soft); font-size:12px; margin-top:2px;}
+  .t-desc{margin-top:8px; font-size:14px; color:var(--ink-soft); max-width:58ch;}
+
+  /* ---------- projects ---------- */
+  .project-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:16px;}
+  @media (max-width:640px){ .project-grid{grid-template-columns:1fr;} }
+  .card{
+    border:1px solid var(--line); border-radius:10px; padding:18px;
+    background:var(--paper-raised);
+  }
+  .card-top{display:flex; justify-content:space-between; align-items:flex-start; gap:10px;}
+  .card-title{font-family:'JetBrains Mono',monospace; font-weight:700; font-size:15px;}
+  .card-star{font-size:12px; color:var(--ink-soft); font-family:'JetBrains Mono',monospace;}
+  .card-desc{font-size:13.5px; color:var(--ink-soft); margin-top:8px; min-height:38px;}
+  .tag-row{display:flex; gap:6px; margin-top:14px; flex-wrap:wrap;}
+  .tag{font-size:11px; font-family:'JetBrains Mono',monospace; background:var(--line); padding:3px 8px; border-radius:4px; color:var(--ink-soft);}
+
+  /* ---------- blog ---------- */
+  .post-row{display:flex; justify-content:space-between; gap:16px; padding:16px 0; border-bottom:1px solid var(--line);}
+  .post-row:first-child{padding-top:0;}
+  .post-title{font-weight:600; font-size:15px;}
+  .post-desc{font-size:13px; color:var(--ink-soft); margin-top:4px; max-width:52ch;}
+  .post-date{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--ink-soft); white-space:nowrap;}
+
+  /* ---------- guestbook ---------- */
+  .guest-form{display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap;}
+  .guest-form input, .guest-form textarea{
+    font-family:'Inter',sans-serif; font-size:13px; border:1px solid var(--line);
+    border-radius:6px; padding:10px 12px; background:var(--paper-raised); color:var(--ink);
+  }
+  .guest-form input{flex:1; min-width:160px;}
+  .guest-entry{padding:14px 0; border-bottom:1px solid var(--line); font-size:13.5px;}
+  .guest-entry .who{font-family:'JetBrains Mono',monospace; font-weight:700; font-size:12.5px; color:var(--teal-deep);}
+  .guest-entry .when{color:var(--ink-soft); font-size:11.5px; margin-left:6px;}
+
+  /* ---------- contact ---------- */
+  .contact-box{
+    background:var(--code-bg); border-radius:12px; padding:26px; color:#DADCE2;
+  }
+  .contact-box .prompt{font-family:'JetBrains Mono',monospace; font-size:13px; color:#8A8F98;}
+  .contact-box .line{font-family:'JetBrains Mono',monospace; font-size:14px; margin-top:8px;}
+  .contact-box a{color:#7FD9BE; text-decoration:none;}
+  footer{margin-top:40px; font-size:12px; color:var(--ink-soft); text-align:center;}
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand">alex<span class="cursor"></span></div>
+    <div class="brand-sub">CS student · data & ML track</div>
+
+    <nav class="tree">
+      <a class="tree-item active" href="#about"><span class="dot"></span>about.md</a>
+      <a class="tree-item" href="#stats"><span class="dot"></span>contributions.svg</a>
+      <a class="tree-item" href="#experience"><span class="dot"></span>experience.log</a>
+      <div class="tree-group-label">projects/</div>
+      <a class="tree-item" href="#projects" style="padding-left:22px;"><span class="dot"></span>index.html</a>
+      <a class="tree-item" href="#blog"><span class="dot"></span>blog/</a>
+      <a class="tree-item" href="#guestbook"><span class="dot"></span>guestbook.txt</a>
+      <a class="tree-item" href="#contact"><span class="dot"></span>contact.sh</a>
+    </nav>
+
+    <div class="sidebar-foot">
+      <div>build: passing</div>
+      <div class="status-line"><span class="status-dot"></span> open to internships</div>
+    </div>
+  </aside>
+
+  <main>
+
+    <section id="about">
+      <div class="hero-top">
+        <div class="avatar">AR</div>
+        <div class="hero-text">
+          <h1>Alex Rao</h1>
+          <div class="role-line">// B.Tech CSE · Data Engineering & ML</div>
+          <p class="lede">I build things with data — pipelines, models, and the occasional browser-based tool that has no business running as fast as it does. Currently deep in DSA practice and looking for my first real-world dataset to misuse.</p>
+          <div class="hero-links">
+            <a class="btn primary" href="#projects">View projects</a>
+            <a class="btn ghost" href="#contact">Get in touch</a>
+            <a class="btn ghost" href="#">Resume ↓</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-grid" id="stats">
+        <div class="stat"><div class="stat-num">3</div><div class="stat-label">projects shipped</div></div>
+        <div class="stat"><div class="stat-num">412</div><div class="stat-label">contributions this year</div></div>
+        <div class="stat"><div class="stat-num">6</div><div class="stat-label">blog posts</div></div>
+        <div class="stat"><div class="stat-num">14</div><div class="stat-label">day streak</div></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="filepath">contributions.svg<div class="bar"></div></div>
+      <h2>Contribution activity</h2>
+      <p class="section-sub">A year of commits, rendered honestly — the gaps are exam weeks.</p>
+      <div class="heatmap-panel">
+        <div class="heatmap-head">
+          <span class="count">412 contributions in the last year</span>
+          <span class="range">Aug 2025 – Aug 2026</span>
+        </div>
+        <div class="heatmap-grid" id="heatmap"></div>
+        <div class="streak-row">
+          <div class="streak-item">longest streak <b>19 days</b></div>
+          <div class="streak-item">current streak <b>3 days</b></div>
+          <div class="streak-item">busiest day <b>Wed</b></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="experience">
+      <div class="filepath">experience.log<div class="bar"></div></div>
+      <h2>Experience</h2>
+      <p class="section-sub">Roles, research, and things that ran on a deadline.</p>
+      <div class="timeline">
+        <div class="t-item">
+          <div class="t-role">Research Assistant — Medical Imaging Lab</div>
+          <div class="t-org">university research group</div>
+          <div class="t-date">2026 — present</div>
+          <div class="t-desc">Working on a browser-based tool for real-time visualization, using computer vision to process video streams entirely client-side.</div>
+        </div>
+        <div class="t-item">
+          <div class="t-role">Capstone Team Member — Medication Scheduler</div>
+          <div class="t-org">coursework, C</div>
+          <div class="t-date">2026</div>
+          <div class="t-desc">Built a modular medication reminder system with a three-person team, under faculty guidance.</div>
+        </div>
+        <div class="t-item">
+          <div class="t-role">Open source — self-directed</div>
+          <div class="t-org">github.com/alexrao</div>
+          <div class="t-date">2025 — present</div>
+          <div class="t-desc">Shipped three personal projects end-to-end, from idea to a live repo, while learning in public.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="projects">
+      <div class="filepath">projects/index.html<div class="bar"></div></div>
+      <h2>Projects</h2>
+      <p class="section-sub">Things I built because I wanted them to exist.</p>
+      <div class="project-grid">
+        <div class="card">
+          <div class="card-top"><div class="card-title">PhantomVein</div><div class="card-star">★ 28</div></div>
+          <div class="card-desc">Browser-based tool for real-time vein visualization using computer vision, no install required.</div>
+          <div class="tag-row"><span class="tag">opencv.js</span><span class="tag">webrtc</span><span class="tag">wasm</span></div>
+        </div>
+        <div class="card">
+          <div class="card-top"><div class="card-title">Hospital Billing System</div><div class="card-star">★ 9</div></div>
+          <div class="card-desc">Modular C project handling patient records, billing logic, and receipts end to end.</div>
+          <div class="tag-row"><span class="tag">c</span><span class="tag">file i/o</span><span class="tag">modular</span></div>
+        </div>
+        <div class="card">
+          <div class="card-top"><div class="card-title">Medication Scheduler</div><div class="card-star">★ 6</div></div>
+          <div class="card-desc">Capstone reminder system for tracking dosages and schedules, built with a three-person team.</div>
+          <div class="tag-row"><span class="tag">c</span><span class="tag">capstone</span><span class="tag">team</span></div>
+        </div>
+        <div class="card">
+          <div class="card-top"><div class="card-title">This portfolio</div><div class="card-star">★ —</div></div>
+          <div class="card-desc">The site you're looking at right now. Meta, but someone had to build it.</div>
+          <div class="tag-row"><span class="tag">html/css</span><span class="tag">vanilla js</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="blog">
+      <div class="filepath">blog/<div class="bar"></div></div>
+      <h2>Blog</h2>
+      <p class="section-sub">Notes from things I learned the hard way.</p>
+      <div class="post-list">
+        <div class="post-row">
+          <div><div class="post-title">What I got wrong about DSA for a whole semester</div><div class="post-desc">Confusing memorizing patterns for understanding them, and how I noticed.</div></div>
+          <div class="post-date">Jul 2026</div>
+        </div>
+        <div class="post-row">
+          <div><div class="post-title">Building a vein-finder in the browser</div><div class="post-desc">OpenCV.js, WebRTC, and the weird constraints of running CV client-side.</div></div>
+          <div class="post-date">Jun 2026</div>
+        </div>
+        <div class="post-row">
+          <div><div class="post-title">Notes from a same-day seminar deadline</div><div class="post-desc">What actually matters when you have six hours, not six days.</div></div>
+          <div class="post-date">Apr 2026</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="guestbook">
+      <div class="filepath">guestbook.txt<div class="bar"></div></div>
+      <h2>Guestbook</h2>
+      <p class="section-sub">Leave a note. No login required.</p>
+      <div class="guest-form">
+        <input type="text" placeholder="Your name" />
+        <input type="text" placeholder="Say something" style="flex:2;" />
+        <button class="btn primary" type="button">Sign</button>
+      </div>
+      <div class="guest-entry"><span class="who">priya_k</span><span class="when">2 days ago</span><div>the heatmap is genuinely satisfying to look at, good work</div></div>
+      <div class="guest-entry"><span class="who">devMoss</span><span class="when">1 week ago</span><div>file tree nav is such a nice touch for a CS portfolio</div></div>
+    </section>
+
+    <section id="contact">
+      <div class="filepath">contact.sh<div class="bar"></div></div>
+      <h2>Contact</h2>
+      <div class="contact-box">
+        <div class="prompt">$ cat contact.sh</div>
+        <div class="line">email → <a href="#">alex.rao@mail.com</a></div>
+        <div class="line">github → <a href="#">github.com/alexrao</a></div>
+        <div class="line">linkedin → <a href="#">linkedin.com/in/alexrao</a></div>
+      </div>
+      <footer>built by Alex Rao · last deployed Aug 2026</footer>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  // generate a believable contribution heatmap
+  const grid = document.getElementById('heatmap');
+  const weeks = 52;
+  const colors = ['#1B1F26','#123F34','#1F6F5C','#2E9678','#7FD9BE'];
+  for(let w=0; w<weeks; w++){
+    for(let d=0; d<7; d++){
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      const r = Math.random();
+      let level = 0;
+      if(r > 0.55) level = 1;
+      if(r > 0.72) level = 2;
+      if(r > 0.85) level = 3;
+      if(r > 0.94) level = 4;
+      cell.style.background = colors[level];
+      grid.appendChild(cell);
+    }
+  }
+
+  // simple nav active-state on scroll
+  const links = document.querySelectorAll('.tree-item[href^="#"]');
+  const sections = Array.from(links).map(l => document.querySelector(l.getAttribute('href'))).filter(Boolean);
+  window.addEventListener('scroll', () => {
+    let current = sections[0];
+    sections.forEach(s => { if(window.scrollY >= s.offsetTop - 120) current = s; });
+    links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + current.id));
+  });
+</script>
+
+</body>
+</html>
