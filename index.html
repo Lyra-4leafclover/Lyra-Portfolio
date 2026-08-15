@@ -128,17 +128,22 @@
   .btn.ghost{background:transparent; color:var(--ink) !important; border-color:var(--ink) !important;}
   .btn:hover{opacity:0.9;}
 
-  /* ---------- REAL DOM SVG HEATMAP & LANGUAGES ---------- */
+  /* ---------- FULL YEAR SVG HEATMAP WITH MONTH & DAY LABELS ---------- */
   .heatmap-panel{
-    background:var(--code-bg); border-radius:10px; padding:16px 18px 14px;
-    color:#DADCE2; margin-top:14px; position:relative;
+    background:var(--code-bg); border-radius:10px; padding:18px 20px 16px;
+    color:#DADCE2; margin-top:14px; position:relative; border:1px solid var(--code-line);
   }
-  .heatmap-head{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px; flex-wrap:wrap; gap:8px;}
-  .heatmap-head .count{font-family:'JetBrains Mono',monospace; font-size:13px; color:#fff;}
+  .heatmap-head{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:12px; flex-wrap:wrap; gap:8px;}
+  .heatmap-head .count{font-family:'JetBrains Mono',monospace; font-size:14px; font-weight:700; color:#fff;}
   .heatmap-head .range{font-size:11.5px; color:#8A8F98;}
   
   .heatmap-svg-box{
-    width:100%; overflow-x:auto; padding:6px 0; text-align:center;
+    width:100%; overflow-x:auto; padding:4px 0; text-align:center;
+  }
+  .heatmap-svg-box svg text{
+    fill: #8A8F98;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
   }
   .heatmap-svg-box svg rect{
     transition: fill 0.15s ease, stroke 0.15s ease;
@@ -149,12 +154,11 @@
     stroke-width: 1.5px;
   }
 
-  .streak-row{display:flex; gap:18px; margin-top:10px; flex-wrap:wrap;}
-  .streak-item{font-size:11.5px; color:#8A8F98;}
+  .streak-row{display:flex; gap:18px; margin-top:12px; flex-wrap:wrap; font-size:11.5px; color:#8A8F98;}
   .streak-item b{color:#fff; font-family:'JetBrains Mono',monospace; font-weight:700;}
 
   /* LANG BARS IN HEATMAP PANEL */
-  .lang-panel-box{margin-top:14px; padding-top:12px; border-top:1px solid var(--code-line);}
+  .lang-panel-box{margin-top:16px; padding-top:14px; border-top:1px solid var(--code-line);}
   .lang-panel-head{font-family:'JetBrains Mono',monospace; font-size:12px; color:#8A8F98; margin-bottom:10px; text-transform:uppercase; letter-spacing:0.05em;}
   .lang-item{margin-bottom:8px;}
   .lang-label{display:flex; justify-content:space-between; font-family:'JetBrains Mono',monospace; font-size:11px; color:#DADCE2; margin-bottom:3px;}
@@ -194,7 +198,7 @@
   .post-desc{font-size:13px; color:var(--ink-soft); margin-top:4px; max-width:58ch;}
   .post-date{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--ink-soft); white-space:nowrap;}
 
-  /* ---------- GUESTBOOK AUTH & FORM STYLES ---------- */
+  /* ---------- GUESTBOOK CLEAN INLINE FORM (NO PROMPT MODALS) ---------- */
   .gb-auth-btn-row{
     display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;
   }
@@ -347,18 +351,18 @@
       </div>
     </section>
 
-    <!-- 2. REAL DOM SVG HEATMAP WITH PER-DAY HOVER DATE TOOLTIPS & COMPUTED STREAKS -->
+    <!-- 2. FULL 52-WEEK SVG HEATMAP WITH MONTH HEADERS, DAY LABELS & HOVER DATE TOOLTIPS -->
     <section id="stats">
       <div class="filepath">contributions.svg<div class="bar"></div></div>
       <h2>Contribution activity</h2>
       <p class="section-sub">A year of commits, rendered honestly — synced live to @Lyra-4leafclover on GitHub.</p>
       <div class="heatmap-panel">
         <div class="heatmap-head">
-          <span id="heatmap-count-label" class="count">86 contributions in the last year</span>
+          <span id="heatmap-count-label" class="count">13 contributions in the last year</span>
           <span class="range">Aug 2025 – Aug 2026</span>
         </div>
         
-        <!-- REAL INTERACTIVE DOM SVG HEATMAP WITH HOVER TOOLTIPS -->
+        <!-- FULL 52-WEEK SVG HEATMAP ENGINE WITH MONTH & DAY LABELS -->
         <div class="heatmap-svg-box" id="heatmap-svg-container"></div>
 
         <div class="streak-row">
@@ -433,29 +437,29 @@
       <div id="home-post-list" class="post-list"></div>
     </section>
 
-    <!-- 6. GUESTBOOK WITH GITHUB, GMAIL, DISCORD, EMAIL AUTH & REALTIME PERSISTENCE -->
+    <!-- 6. GUESTBOOK WITH DIRECT HANDLE SELECTION & INLINE EMAIL FORM -->
     <section id="guestbook">
       <div class="filepath">guestbook.txt<div class="bar"></div></div>
       <h2>Guestbook</h2>
-      <p class="section-sub">Leave a note. Sign in or type your handle directly.</p>
+      <p class="section-sub">Leave a note. Type your name directly or select a handle provider.</p>
 
       <!-- AUTH BUTTONS ROW -->
       <div id="gb-auth-panel">
         <div id="gb-unauth-view">
           <div class="gb-auth-btn-row">
-            <button type="button" class="btn-oauth github" onclick="loginWithGithub();">
+            <button type="button" class="btn-oauth github" onclick="selectHandleProvider('GitHub');">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-              Sign in with GitHub
+              GitHub Handle
             </button>
 
-            <button type="button" class="btn-oauth google" onclick="loginWithGoogle();">
+            <button type="button" class="btn-oauth google" onclick="selectHandleProvider('Gmail');">
               <svg width="14" height="14" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
-              Sign in with Gmail
+              Gmail Handle
             </button>
 
-            <button type="button" class="btn-oauth discord" onclick="loginWithDiscord();">
+            <button type="button" class="btn-oauth discord" onclick="selectHandleProvider('Discord');">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="#5865F2"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
-              Sign in with Discord
+              Discord Handle
             </button>
 
             <button type="button" class="btn-oauth email" onclick="toggleEmailAuthBox();">
@@ -657,7 +661,7 @@
     document.body.style.overflow = 'auto';
   };
 
-  // 2. REAL DOM-BASED SVG HEATMAP ENGINE WITH HOVER DATE TOOLTIPS & REAL COMPUTED COMMIT DATA
+  // 2. FULL 52-WEEK DOM-BASED SVG HEATMAP ENGINE WITH MONTH HEADERS & DAY LABELS
   async function initLiveGitHubHeatmap() {
     const username = 'Lyra-4leafclover';
     const container = document.getElementById('heatmap-svg-container');
@@ -665,10 +669,9 @@
     if (!container) return;
 
     let commitMap = {};
-    let totalCount = 86; // Real baseline from GitHub profile snapshot
+    let totalCount = 13; // Real baseline from GitHub profile snapshot
 
     try {
-      // Query public contribution API directly
       const res = await fetch(`https://github-contributions-api.jogruber.de/v4/${username}?_=${Date.now()}`);
       if (res.ok) {
         const data = await res.json();
@@ -686,40 +689,67 @@
       countLabel.textContent = `${totalCount} contributions in the last year`;
     }
 
-    // Build 52-week interactive SVG grid (7 rows x 52 columns)
+    // Build 52-week SVG layout (Matching GitHub's exact profile layout)
     const cols = 52;
     const rows = 7;
     const boxSize = 10;
     const gap = 3;
-    const width = cols * (boxSize + gap) + 30;
-    const height = rows * (boxSize + gap) + 20;
+    const leftMargin = 30; // space for Mon, Wed, Fri
+    const topMargin = 22;  // space for Aug Sep Oct Nov Dec Jan Feb Mar Apr May Jun Jul Aug
+    const width = leftMargin + cols * (boxSize + gap) + 10;
+    const height = topMargin + rows * (boxSize + gap) + 20;
 
     let svg = `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" style="display:block; margin:0 auto;">`;
-    
+
+    // Render Day Labels on Left (Mon, Wed, Fri)
+    svg += `<text x="5" y="${topMargin + 1 * (boxSize + gap) + 8}">Mon</text>`;
+    svg += `<text x="5" y="${topMargin + 3 * (boxSize + gap) + 8}">Wed</text>`;
+    svg += `<text x="5" y="${topMargin + 5 * (boxSize + gap) + 8}">Fri</text>`;
+
+    // Render Month Headers Across 52 Columns
+    const months = ['Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'];
+    const monthSpacing = (cols * (boxSize + gap)) / 12;
+    months.forEach((m, idx) => {
+      const x = leftMargin + idx * monthSpacing;
+      svg += `<text x="${x}" y="12">${m}</text>`;
+    });
+
     let curDate = new Date();
     curDate.setDate(curDate.getDate() - (cols * 7));
 
+    // Render 52-Week Grid Squares with per-day title tooltips
     for (let c = 0; c < cols; c++) {
       for (let r = 0; r < rows; r++) {
         const dStr = curDate.toISOString().split('T')[0];
         const count = commitMap[dStr] || 0;
         
-        let color = "#1c2029"; // empty
-        if (count >= 5) color = "#1F6F5C";
-        else if (count >= 3) color = "#2dd4bf";
-        else if (count >= 1) color = "#123F34";
+        let color = "#1c2029"; // empty square
+        if (count >= 5) color = "#39d353";
+        else if (count >= 3) color = "#26a641";
+        else if (count >= 1) color = "#006d32";
 
         const formattedDate = curDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
         const tooltipText = count > 0 ? `${count} contribution${count > 1 ? 's' : ''} on ${formattedDate}` : `No contributions on ${formattedDate}`;
 
-        const x = 20 + c * (boxSize + gap);
-        const y = 10 + r * (boxSize + gap);
+        const x = leftMargin + c * (boxSize + gap);
+        const y = topMargin + r * (boxSize + gap);
 
         svg += `<rect x="${x}" y="${y}" width="${boxSize}" height="${boxSize}" rx="2" fill="${color}" data-date="${dStr}" data-count="${count}"><title>${tooltipText}</title></rect>`;
 
         curDate.setDate(curDate.getDate() + 1);
       }
     }
+
+    // Render Legend on Bottom Right
+    const legendX = width - 110;
+    const legendY = height - 10;
+    svg += `<text x="${legendX - 28}" y="${legendY + 8}">Less</text>`;
+    svg += `<rect x="${legendX}" y="${legendY}" width="9" height="9" rx="2" fill="#1c2029"></rect>`;
+    svg += `<rect x="${legendX + 13}" y="${legendY}" width="9" height="9" rx="2" fill="#0e4429"></rect>`;
+    svg += `<rect x="${legendX + 26}" y="${legendY}" width="9" height="9" rx="2" fill="#006d32"></rect>`;
+    svg += `<rect x="${legendX + 39}" y="${legendY}" width="9" height="9" rx="2" fill="#26a641"></rect>`;
+    svg += `<rect x="${legendX + 52}" y="${legendY}" width="9" height="9" rx="2" fill="#39d353"></rect>`;
+    svg += `<text x="${legendX + 66}" y="${legendY + 8}">More</text>`;
 
     svg += `</svg>`;
     container.innerHTML = svg;
@@ -784,8 +814,16 @@
     langContainer.innerHTML = html;
   }
 
-  // 4. GUESTBOOK IDENTIFIER HANDLERS (CRASH-FREE PERSISTENT SESSIONS)
+  // 4. CLEAN INLINE GUESTBOOK IDENTIFIER HANDLER (NO PROMPT MODALS)
   let currentUser = null;
+
+  function selectHandleProvider(providerName) {
+    const gbNameInput = document.getElementById("gb-name");
+    if (gbNameInput) {
+      gbNameInput.placeholder = `Your ${providerName} handle / name`;
+      gbNameInput.focus();
+    }
+  }
 
   function applyUserToForm(name) {
     document.getElementById("user-display-name").textContent = name;
@@ -801,21 +839,6 @@
     applyUserToForm(name);
     document.getElementById("gb-unauth-view").style.display = "none";
     document.getElementById("gb-user-view").style.display = "block";
-  }
-
-  function loginWithGithub() {
-    const name = prompt("Sign in with GitHub — Enter your username or handle:", "Lyra-4leafclover");
-    if (name) handleUserSession(name.trim(), "github");
-  }
-
-  function loginWithGoogle() {
-    const name = prompt("Sign in with Gmail — Enter your name or email:", "Lyra");
-    if (name) handleUserSession(name.trim(), "google");
-  }
-
-  function loginWithDiscord() {
-    const name = prompt("Sign in with Discord — Enter your handle:", "sorovia7");
-    if (name) handleUserSession(name.trim(), "discord");
   }
 
   function toggleEmailAuthBox() {
