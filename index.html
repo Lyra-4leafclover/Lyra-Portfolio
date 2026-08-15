@@ -28,6 +28,8 @@
     --code-bg:#1c2029;
     --code-line:#2e3442;
     --paper-raised:#FFFFFE;
+    --empty-box-fill: rgba(20, 24, 31, 0.07);
+    --empty-box-stroke: rgba(20, 24, 31, 0.08);
   }
   body.dark-theme{
     --paper:#16181d;
@@ -40,6 +42,8 @@
     --line:#2d3342;
     --code-bg:#12141a;
     --code-line:#262a36;
+    --empty-box-fill: rgba(255, 255, 255, 0.07);
+    --empty-box-stroke: rgba(255, 255, 255, 0.05);
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html{scroll-behavior:smooth;}
@@ -137,18 +141,19 @@
 
   /* ---------- PORTFOLIO TEAL DESIGN SVG HEATMAP ---------- */
   .heatmap-panel{
-    background:var(--code-bg); border-radius:10px; padding:18px 20px 16px;
-    color:#DADCE2; margin-top:14px; position:relative; border:1px solid var(--code-line);
+    background:var(--paper-raised); border-radius:10px; padding:12px 16px 12px;
+    color:var(--ink); margin-top:14px; position:relative; border:1px solid var(--line);
+    transition:background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
   }
-  .heatmap-head{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:12px; flex-wrap:wrap; gap:8px;}
-  .heatmap-head .count{font-family:'JetBrains Mono',monospace; font-size:14px; font-weight:700; color:#fff;}
-  .heatmap-head .range{font-size:11.5px; color:#8A8F98;}
+  .heatmap-head{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; flex-wrap:wrap; gap:8px;}
+  .heatmap-head .count{font-family:'JetBrains Mono',monospace; font-size:13.5px; font-weight:700; color:var(--ink);}
+  .heatmap-head .range{font-size:11px; color:var(--ink-soft);}
   
   .heatmap-svg-box{
-    width:100%; overflow-x:auto; padding:4px 0; text-align:center;
+    width:100%; overflow-x:auto; padding:2px 0; text-align:center;
   }
   .heatmap-svg-box svg text{
-    fill: #8A8F98;
+    fill: var(--ink-soft);
     font-family: 'JetBrains Mono', monospace;
     font-size: 9.5px;
   }
@@ -157,19 +162,19 @@
     cursor: pointer;
   }
   .heatmap-svg-box svg rect:hover{
-    stroke: #ffffff;
+    stroke: var(--ink);
     stroke-width: 1.5px;
   }
 
-  .streak-row{display:flex; gap:18px; margin-top:12px; flex-wrap:wrap; font-size:11.5px; color:#8A8F98;}
-  .streak-item b{color:#fff; font-family:'JetBrains Mono',monospace; font-weight:700;}
+  .streak-row{display:flex; gap:16px; margin-top:8px; flex-wrap:wrap; font-size:11px; color:var(--ink-soft);}
+  .streak-item b{color:var(--ink); font-family:'JetBrains Mono',monospace; font-weight:700;}
 
   /* LANG BARS IN HEATMAP PANEL */
-  .lang-panel-box{margin-top:16px; padding-top:14px; border-top:1px solid var(--code-line);}
-  .lang-panel-head{font-family:'JetBrains Mono',monospace; font-size:12px; color:#8A8F98; margin-bottom:10px; text-transform:uppercase; letter-spacing:0.05em;}
-  .lang-item{margin-bottom:8px;}
-  .lang-label{display:flex; justify-content:space-between; font-family:'JetBrains Mono',monospace; font-size:11px; color:#DADCE2; margin-bottom:3px;}
-  .lang-track{width:100%; height:4px; background:#262A33; border-radius:2px; overflow:hidden;}
+  .lang-panel-box{margin-top:10px; padding-top:10px; border-top:1px solid var(--line);}
+  .lang-panel-head{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-soft); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.05em;}
+  .lang-item{margin-bottom:5px;}
+  .lang-label{display:flex; justify-content:space-between; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink); margin-bottom:2px;}
+  .lang-track{width:100%; height:3px; background:var(--line); border-radius:2px; overflow:hidden;}
   .lang-fill{height:100%; background:linear-gradient(90deg, var(--teal), #7FD9BE); border-radius:2px;}
 
   /* ---------- timeline / experience ---------- */
@@ -269,11 +274,12 @@
 
   /* ---------- contact ---------- */
   .contact-box{
-    background:var(--code-bg); border-radius:12px; padding:26px; color:#DADCE2;
+    background:var(--paper-raised); border-radius:12px; padding:18px 22px; color:var(--ink);
+    border:1px solid var(--line); transition:background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
   }
-  .contact-box .prompt{font-family:'JetBrains Mono',monospace; font-size:13px; color:#8A8F98;}
-  .contact-box .line{font-family:'JetBrains Mono',monospace; font-size:14px; margin-top:8px;}
-  .contact-box a{color:#7FD9BE; text-decoration:none;}
+  .contact-box .prompt{font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--ink-soft);}
+  .contact-box .line{font-family:'JetBrains Mono',monospace; font-size:14px; margin-top:6px;}
+  .contact-box a{color:var(--teal); text-decoration:none;}
   .contact-box a:hover{text-decoration:underline;}
   footer{margin-top:40px; font-size:12px; color:var(--ink-soft); text-align:center;}
 
@@ -863,8 +869,8 @@
         const dStr = `${yyyy}-${mm}-${dd}`;
         const count = commitMap[dStr] || 0;
         
-        let color = "rgba(255, 255, 255, 0.07)"; // crisp visible empty square box
-        let strokeColor = "rgba(255, 255, 255, 0.05)";
+        let color = "var(--empty-box-fill)"; // adaptive visible empty square box
+        let strokeColor = "var(--empty-box-stroke)";
         if (count >= 5) { color = "#7FD9BE"; strokeColor = "#7FD9BE"; }
         else if (count >= 3) { color = "#2dd4bf"; strokeColor = "#2dd4bf"; }
         else if (count >= 2) { color = "#1F6F5C"; strokeColor = "#1F6F5C"; }
@@ -886,7 +892,7 @@
     const legendX = width - 125;
     const legendY = height - 10;
     svg += `<text x="${legendX - 28}" y="${legendY + 8}">Less</text>`;
-    svg += `<rect x="${legendX}" y="${legendY}" width="9" height="9" rx="2" fill="rgba(255, 255, 255, 0.07)" stroke="rgba(255, 255, 255, 0.05)"></rect>`;
+    svg += `<rect x="${legendX}" y="${legendY}" width="9" height="9" rx="2" fill="var(--empty-box-fill)" stroke="var(--empty-box-stroke)"></rect>`;
     svg += `<rect x="${legendX + 13}" y="${legendY}" width="9" height="9" rx="2" fill="#123F34"></rect>`;
     svg += `<rect x="${legendX + 26}" y="${legendY}" width="9" height="9" rx="2" fill="#1F6F5C"></rect>`;
     svg += `<rect x="${legendX + 39}" y="${legendY}" width="9" height="9" rx="2" fill="#2dd4bf"></rect>`;
