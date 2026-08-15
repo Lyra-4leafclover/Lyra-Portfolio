@@ -8,8 +8,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <!-- CUSTOM OBSIDIAN MINT FAVICON LOGO -->
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%2314181f'/><circle cx='32' cy='32' r='24' fill='none' stroke='%231F6F5C' stroke-width='2' opacity='0.6'/><g transform='translate(32,32)'><circle cx='-10' cy='-10' r='8' fill='%231F6F5C' opacity='0.75'/><circle cx='10' cy='-10' r='8' fill='%231F6F5C' opacity='0.75'/><circle cx='-10' cy='10' r='8' fill='%231F6F5C' opacity='0.75'/><circle cx='10' cy='10' r='8' fill='%231F6F5C' opacity='0.75'/><path d='M0 -22 L4 -6 L20 0 L4 6 L0 22 L-4 6 L-20 0 L-4 -6 Z' fill='%232dd4bf'/><circle cx='0' cy='0' r='4' fill='%237FD9BE'/></g></svg>">
-<link rel="alternate icon" href="assets2/favicon.svg">
+<link rel="icon" type="image/x-icon" href="favicon.ico?v=3">
+<link rel="icon" type="image/png" sizes="64x64" href="assets2/favicon.png?v=3">
+<link rel="icon" type="image/svg+xml" href="assets2/favicon.svg?v=3">
+<link rel="shortcut icon" type="image/x-icon" href="favicon.ico?v=3">
+<link rel="apple-touch-icon" href="assets2/favicon.png?v=3">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
@@ -914,12 +917,20 @@
         const repos = await res.json();
         const liveTotals = {};
         for (const repo of repos) {
-          if (!repo.fork && repo.language) {
-            liveTotals[repo.language] = (liveTotals[repo.language] || 0) + (repo.size || 1000);
+          if (!repo.fork) {
+            try {
+              const lRes = await fetch(repo.languages_url);
+              if (lRes.ok) {
+                const lData = await lRes.json();
+                for (const [l, b] of Object.entries(lData)) {
+                  liveTotals[l] = (liveTotals[l] || 0) + b;
+                }
+              }
+            } catch (err) {}
           }
         }
-        // Only update if complete distribution with multiple languages was retrieved
-        if (Object.keys(liveTotals).length >= 3) {
+        // Only update if complete distribution across repositories with at least 4 languages was retrieved
+        if (Object.keys(liveTotals).length >= 4) {
           langTotals = liveTotals;
         }
       }
