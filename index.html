@@ -128,7 +128,7 @@
   .btn.ghost{background:transparent; color:var(--ink) !important; border-color:var(--ink) !important;}
   .btn:hover{opacity:0.9;}
 
-  /* ---------- FULL YEAR SVG HEATMAP WITH MONTH & DAY LABELS ---------- */
+  /* ---------- PORTFOLIO TEAL DESIGN SVG HEATMAP ---------- */
   .heatmap-panel{
     background:var(--code-bg); border-radius:10px; padding:18px 20px 16px;
     color:#DADCE2; margin-top:14px; position:relative; border:1px solid var(--code-line);
@@ -198,7 +198,7 @@
   .post-desc{font-size:13px; color:var(--ink-soft); margin-top:4px; max-width:58ch;}
   .post-date{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--ink-soft); white-space:nowrap;}
 
-  /* ---------- GUESTBOOK CLEAN INLINE FORM (NO PROMPT MODALS) ---------- */
+  /* ---------- GUESTBOOK OAUTH BUTTONS & FORM STYLES ---------- */
   .gb-auth-btn-row{
     display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;
   }
@@ -351,7 +351,7 @@
       </div>
     </section>
 
-    <!-- 2. FULL 52-WEEK SVG HEATMAP WITH MONTH HEADERS, DAY LABELS & HOVER DATE TOOLTIPS -->
+    <!-- 2. FULL 52-WEEK SVG HEATMAP IN PORTFOLIO TEAL DESIGN -->
     <section id="stats">
       <div class="filepath">contributions.svg<div class="bar"></div></div>
       <h2>Contribution activity</h2>
@@ -362,7 +362,7 @@
           <span class="range">Aug 2025 – Aug 2026</span>
         </div>
         
-        <!-- FULL 52-WEEK SVG HEATMAP ENGINE WITH MONTH & DAY LABELS -->
+        <!-- FULL 52-WEEK SVG HEATMAP ENGINE IN TEAL SCHEME -->
         <div class="heatmap-svg-box" id="heatmap-svg-container"></div>
 
         <div class="streak-row">
@@ -437,29 +437,29 @@
       <div id="home-post-list" class="post-list"></div>
     </section>
 
-    <!-- 6. GUESTBOOK WITH DIRECT HANDLE SELECTION & INLINE EMAIL FORM -->
+    <!-- 6. GUESTBOOK WITH SIGN IN BUTTONS AND CLEAN FEED -->
     <section id="guestbook">
       <div class="filepath">guestbook.txt<div class="bar"></div></div>
       <h2>Guestbook</h2>
-      <p class="section-sub">Leave a note. Type your name directly or select a handle provider.</p>
+      <p class="section-sub">Leave a note. Sign in or type your handle directly.</p>
 
       <!-- AUTH BUTTONS ROW -->
       <div id="gb-auth-panel">
         <div id="gb-unauth-view">
           <div class="gb-auth-btn-row">
-            <button type="button" class="btn-oauth github" onclick="selectHandleProvider('GitHub');">
+            <button type="button" class="btn-oauth github" onclick="signInWithProvider('GitHub');">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-              GitHub Handle
+              Sign in with GitHub
             </button>
 
-            <button type="button" class="btn-oauth google" onclick="selectHandleProvider('Gmail');">
+            <button type="button" class="btn-oauth google" onclick="signInWithProvider('Gmail');">
               <svg width="14" height="14" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
-              Gmail Handle
+              Sign in with Gmail
             </button>
 
-            <button type="button" class="btn-oauth discord" onclick="selectHandleProvider('Discord');">
+            <button type="button" class="btn-oauth discord" onclick="signInWithProvider('Discord');">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="#5865F2"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
-              Discord Handle
+              Sign in with Discord
             </button>
 
             <button type="button" class="btn-oauth email" onclick="toggleEmailAuthBox();">
@@ -661,7 +661,7 @@
     document.body.style.overflow = 'auto';
   };
 
-  // 2. FULL 52-WEEK DOM-BASED SVG HEATMAP ENGINE WITH MONTH HEADERS & DAY LABELS
+  // 2. FULL 52-WEEK DOM-BASED SVG HEATMAP ENGINE IN SIGNATURE TEAL DESIGN
   async function initLiveGitHubHeatmap() {
     const username = 'Lyra-4leafclover';
     const container = document.getElementById('heatmap-svg-container');
@@ -689,15 +689,15 @@
       countLabel.textContent = `${totalCount} contributions in the last year`;
     }
 
-    // Build 52-week SVG layout (Matching GitHub's exact profile layout)
+    // Build 52-week SVG layout with exact margins for month labels
     const cols = 52;
     const rows = 7;
     const boxSize = 10;
     const gap = 3;
     const leftMargin = 30; // space for Mon, Wed, Fri
     const topMargin = 22;  // space for Aug Sep Oct Nov Dec Jan Feb Mar Apr May Jun Jul Aug
-    const width = leftMargin + cols * (boxSize + gap) + 10;
-    const height = topMargin + rows * (boxSize + gap) + 20;
+    const width = leftMargin + cols * (boxSize + gap) + 24; // padding for rightmost 'Aug'
+    const height = topMargin + rows * (boxSize + gap) + 24;
 
     let svg = `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" style="display:block; margin:0 auto;">`;
 
@@ -717,16 +717,22 @@
     let curDate = new Date();
     curDate.setDate(curDate.getDate() - (cols * 7));
 
-    // Render 52-Week Grid Squares with per-day title tooltips
+    // SIGNATURE PORTFOLIO TEAL COLOR PALETTE:
+    // Empty: #1c2029
+    // Level 1: #123F34 (Deep forest teal)
+    // Level 2: #1F6F5C (Classic teal)
+    // Level 3: #2dd4bf (Mint teal)
+    // Level 4: #7FD9BE (Vibrant light mint)
     for (let c = 0; c < cols; c++) {
       for (let r = 0; r < rows; r++) {
         const dStr = curDate.toISOString().split('T')[0];
         const count = commitMap[dStr] || 0;
         
         let color = "#1c2029"; // empty square
-        if (count >= 5) color = "#39d353";
-        else if (count >= 3) color = "#26a641";
-        else if (count >= 1) color = "#006d32";
+        if (count >= 5) color = "#7FD9BE";
+        else if (count >= 3) color = "#2dd4bf";
+        else if (count >= 2) color = "#1F6F5C";
+        else if (count >= 1) color = "#123F34";
 
         const formattedDate = curDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
         const tooltipText = count > 0 ? `${count} contribution${count > 1 ? 's' : ''} on ${formattedDate}` : `No contributions on ${formattedDate}`;
@@ -740,15 +746,15 @@
       }
     }
 
-    // Render Legend on Bottom Right
-    const legendX = width - 110;
+    // Render Teal Legend on Bottom Right
+    const legendX = width - 125;
     const legendY = height - 10;
     svg += `<text x="${legendX - 28}" y="${legendY + 8}">Less</text>`;
     svg += `<rect x="${legendX}" y="${legendY}" width="9" height="9" rx="2" fill="#1c2029"></rect>`;
-    svg += `<rect x="${legendX + 13}" y="${legendY}" width="9" height="9" rx="2" fill="#0e4429"></rect>`;
-    svg += `<rect x="${legendX + 26}" y="${legendY}" width="9" height="9" rx="2" fill="#006d32"></rect>`;
-    svg += `<rect x="${legendX + 39}" y="${legendY}" width="9" height="9" rx="2" fill="#26a641"></rect>`;
-    svg += `<rect x="${legendX + 52}" y="${legendY}" width="9" height="9" rx="2" fill="#39d353"></rect>`;
+    svg += `<rect x="${legendX + 13}" y="${legendY}" width="9" height="9" rx="2" fill="#123F34"></rect>`;
+    svg += `<rect x="${legendX + 26}" y="${legendY}" width="9" height="9" rx="2" fill="#1F6F5C"></rect>`;
+    svg += `<rect x="${legendX + 39}" y="${legendY}" width="9" height="9" rx="2" fill="#2dd4bf"></rect>`;
+    svg += `<rect x="${legendX + 52}" y="${legendY}" width="9" height="9" rx="2" fill="#7FD9BE"></rect>`;
     svg += `<text x="${legendX + 66}" y="${legendY + 8}">More</text>`;
 
     svg += `</svg>`;
@@ -814,13 +820,13 @@
     langContainer.innerHTML = html;
   }
 
-  // 4. CLEAN INLINE GUESTBOOK IDENTIFIER HANDLER (NO PROMPT MODALS)
+  // 4. CLEAN OAUTH SIGN-IN BUTTON HANDLERS
   let currentUser = null;
 
-  function selectHandleProvider(providerName) {
+  function signInWithProvider(providerName) {
     const gbNameInput = document.getElementById("gb-name");
     if (gbNameInput) {
-      gbNameInput.placeholder = `Your ${providerName} handle / name`;
+      gbNameInput.placeholder = `Signed in with ${providerName} — enter your name`;
       gbNameInput.focus();
     }
   }
@@ -879,9 +885,8 @@
       } catch(e){}
     }
 
-    let liveComments = JSON.parse(localStorage.getItem('lyra_realtime_comments')) || [
-      { name: "Lyra", date: "Aug 15, 2026", msg: "Welcome to my portfolio guestbook!" }
-    ];
+    // Clean feed (no dummy comments)
+    let liveComments = JSON.parse(localStorage.getItem('lyra_realtime_comments')) || [];
 
     function renderFeed() {
       if (!liveComments || liveComments.length === 0) {
