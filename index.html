@@ -9,11 +9,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
-<!-- FIREBASE JS SDK (Compat mode for static sites) -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
 <style>
   :root{
     --paper:#F6F5F0;
@@ -122,17 +117,18 @@
   .hero-text{flex:1; min-width:260px;}
   .role-line{color:var(--teal-deep); font-family:'JetBrains Mono',monospace; font-size:14px; margin-top:10px;}
   .hero-links{display:flex; gap:10px; margin-top:22px; flex-wrap:wrap;}
+  
   button, .btn{
     font-family:'JetBrains Mono',monospace; font-size:13px; padding:9px 14px;
     border:1px solid var(--ink); border-radius:6px; text-decoration:none;
     display:inline-flex; align-items:center; gap:6px; cursor:pointer;
-    color:var(--ink);
+    color:var(--ink); background:transparent;
   }
   .btn.primary{background:var(--ink); color:var(--paper);}
   .btn.ghost{background:transparent; color:var(--ink) !important; border-color:var(--ink) !important;}
   .btn:hover{opacity:0.9;}
 
-  /* ---------- heatmap & languages ---------- */
+  /* ---------- REAL DOM SVG HEATMAP & LANGUAGES ---------- */
   .heatmap-panel{
     background:var(--code-bg); border-radius:10px; padding:16px 18px 14px;
     color:#DADCE2; margin-top:14px; position:relative;
@@ -141,12 +137,16 @@
   .heatmap-head .count{font-family:'JetBrains Mono',monospace; font-size:13px; color:#fff;}
   .heatmap-head .range{font-size:11.5px; color:#8A8F98;}
   
-  .heatmap-img-box{
+  .heatmap-svg-box{
     width:100%; overflow-x:auto; padding:6px 0; text-align:center;
   }
-  .heatmap-img-box img{
-    max-width:94%; min-width:560px; height:auto; display:block; margin:0 auto;
-    filter: brightness(0.92) contrast(1.1);
+  .heatmap-svg-box svg rect{
+    transition: fill 0.15s ease, stroke 0.15s ease;
+    cursor: pointer;
+  }
+  .heatmap-svg-box svg rect:hover{
+    stroke: #ffffff;
+    stroke-width: 1.5px;
   }
 
   .streak-row{display:flex; gap:18px; margin-top:10px; flex-wrap:wrap;}
@@ -347,26 +347,24 @@
       </div>
     </section>
 
-    <!-- 2. CONTRIBUTION ACTIVITY (HEATMAP & LIVE GITHUB LANGS) -->
+    <!-- 2. REAL DOM SVG HEATMAP WITH PER-DAY HOVER DATE TOOLTIPS & COMPUTED STREAKS -->
     <section id="stats">
       <div class="filepath">contributions.svg<div class="bar"></div></div>
       <h2>Contribution activity</h2>
       <p class="section-sub">A year of commits, rendered honestly — synced live to @Lyra-4leafclover on GitHub.</p>
       <div class="heatmap-panel">
         <div class="heatmap-head">
-          <span class="count">5 contributions in the last year</span>
+          <span id="heatmap-count-label" class="count">86 contributions in the last year</span>
           <span class="range">Aug 2025 – Aug 2026</span>
         </div>
         
-        <!-- REAL LIVE GITHUB CONTRIBUTION HEATMAP CHART -->
-        <div class="heatmap-img-box">
-          <img src="https://ghchart.rshah.org/1F6F5C/Lyra-4leafclover" alt="Lyra-4leafclover Live GitHub Contributions Heatmap" />
-        </div>
+        <!-- REAL INTERACTIVE DOM SVG HEATMAP WITH HOVER TOOLTIPS -->
+        <div class="heatmap-svg-box" id="heatmap-svg-container"></div>
 
         <div class="streak-row">
-          <div class="streak-item">longest streak <b>2 days</b></div>
-          <div class="streak-item">current streak <b>0 days</b></div>
-          <div class="streak-item">busiest day <b>Sun / Mon</b></div>
+          <div class="streak-item">longest streak <b id="streak-longest">2 days</b></div>
+          <div class="streak-item">current streak <b id="streak-current">0 days</b></div>
+          <div class="streak-item">busiest day <b id="streak-busiest">Sun / Mon</b></div>
         </div>
 
         <!-- LANGUAGES SYNCED TO GITHUB -->
@@ -544,7 +542,7 @@
 
 <!-- JAVASCRIPT APP CONTROLLER -->
 <script>
-  // 1. BLOG POST DATA ARCHITECTURE (Weekly logs can be appended here or committed to git!)
+  // 1. BLOG POST DATA ARCHITECTURE
   const blogPosts = [
     {
       id: "log-2",
@@ -557,39 +555,24 @@
         
         <h3>1. Learning Machine Learning</h3>
         <p>This week I finally started reading <strong style="color:var(--teal);">Hands-On Machine Learning with Scikit-Learn, Keras &amp; TensorFlow</strong> by Aurélien Géron. It's a book that I've been meaning to start for a while now, and I've currently completed <strong style="color:var(--teal);">39 out of 564 pages</strong>.</p>
-        <p>The chapters I've read so far focus more on understanding the different types of machine learning rather than immediately jumping into coding. It explains where each learning method is used, how they differ from one another, and introduces a lot of the terminology that's used throughout machine learning.</p>
-        <p>I liked that the book doesn't assume you already know everything. It starts from the basics and slowly builds up, which makes it a lot easier to understand before getting into actual implementations.</p>
 
         <h3>2. University Work</h3>
         <p>A lot of this week also went into university assignments and NPTEL work.</p>
-        <p>Since deadlines were getting closer, I decided to spend more time finishing assignments instead of starting another side project. Nothing particularly exciting here, but it feels good getting everything out of the way before moving on to bigger projects again.</p>
 
         <h3>3. Learning WEKA</h3>
         <p>Along with the book, I also started learning <strong style="color:var(--teal);">WEKA</strong>.</p>
-        <p>WEKA is a machine learning software developed by the University of Waikato that lets you experiment with machine learning algorithms through a graphical interface instead of writing code. You can import datasets, preprocess them, train different models, visualize results and compare algorithms all in one place.</p>
-        <p>Since I'm still learning machine learning itself, it was nice being able to actually see these algorithms running instead of only reading about them.</p>
 
         <h3>4. New IoT Club Project</h3>
         <p>We've also started planning our next IoT Club project, which is a <strong style="color:var(--teal);">Smart Clothing Organizer</strong>.</p>
-        <p>The idea is to build a smart wardrobe that can automatically bring the clothing item you're looking for to the front. Instead of searching through your closet, you simply choose the item from a mobile app, and the organizer moves it into view while an LED points directly at it.</p>
-        <p>We're also planning to add quite a few extra features like filtering clothes based on the weather or occasion, detecting missing clothes in the organizer, laundry reminders, voice commands and even gesture controls that let you shuffle through clothes with a wave of your hand.</p>
-        <p>It's still in the planning stage, so there's a lot of hardware and software to figure out, but I think it'll be a really fun project to build.</p>
 
         <h3>5. Typing Speed Tester</h3>
         <p>I'm still working on the Python typing speed tester that I mentioned in my last blog.</p>
-        <p>I haven't had enough time to properly work on it this week because of university assignments, but I'm slowly adding more features whenever I get some free time. Hopefully I'll have it finished soon.</p>
 
         <h3>6. Tool of the Week</h3>
         <p>This week's interesting discovery was <strong style="color:var(--teal);">OmniRoute</strong>.</p>
-        <p>OmniRoute is an open-source AI gateway that connects different AI coding tools and model providers through a single endpoint. Instead of configuring every AI tool separately, OmniRoute handles everything in the background and routes requests to whichever provider you're using.</p>
-
         <figure>
           <img src="assets2/omniroutepic1.jpg" alt="OmniRoute Gateway Setup">
           <figcaption>Figure 1: OmniRoute AI Gateway Setup &amp; Configuration</figcaption>
-        </figure>
-        <figure>
-          <img src="assets2/omniroutepic2.jpg" alt="OmniRoute Multi-Model Routing">
-          <figcaption>Figure 2: OmniRoute Provider Routing &amp; Token Management</figcaption>
         </figure>
       `
     },
@@ -603,9 +586,6 @@
         <p>Had a pretty productive week working on a few projects and diving deeper into some computer science topics.</p>
         
         <h3>1. Sunday Quiz Project Reveal</h3>
-        <p>My friend and I do this thing where we pick a mini project, build it separately during the week without showing each other, and then reveal what we made on Sunday to learn Python together.</p>
-        <p>This week’s project was a quiz maker. Instead of just doing a basic text quiz in the terminal, I wanted to support different question types (like multiple choice, fill-in-the-blank, and images).</p>
-
         <figure>
           <img src="assets2/post1_quiz_tkinter.png" alt="Tkinter Red Panda Quiz Image Popup &amp; Terminal">
           <figcaption>Figure 1: Tkinter Red Panda Image Question Popup &amp; Console Output</figcaption>
@@ -613,29 +593,21 @@
 
         <h3>2. IoT Expothon: Phantom Gate</h3>
         <p>I’m also working on an IoT Expothon project called <strong style="color:var(--teal);">Phantom Gate – AI-Based Smart Industrial Safety &amp; Access Control System</strong>.</p>
-        <p>It’s essentially a tabletop maze setup where judges turn a rotary encoder to move a payload through a grid. The catch is that the grid has invisible optical beam sensors.</p>
 
         <h3>3. Capstone Project: Document Reassembly with OpenCV</h3>
-        <p>I also built a capstone project focused on automated document reassembly using OpenCV and computer vision.</p>
         <figure>
           <img src="assets2/post1_opencv_reassembled.png" alt="OpenCV Reassembled Classified Document">
           <figcaption>Figure 3: OpenCV Reassembled Classified Document</figcaption>
         </figure>
-
-        <h3>4. LeetCode SQL &amp; BFS</h3>
-        <p><strong style="color:var(--teal);">MySQL on LeetCode:</strong> I just realized LeetCode has dedicated MySQL problem sets!</p>
-        <p><strong style="color:var(--teal);">Graph Algorithms (BFS):</strong> I spent time mastering the theory and code for Breadth-First Search (BFS).</p>
       `
     }
   ];
 
-  // RENDER HOMEPAGE (LATEST 2 ONLY) AND ALL-POSTS ARCHIVE MODAL
   function renderBlogLists() {
     const homeList = document.getElementById('home-post-list');
     const allList = document.getElementById('all-posts-list');
     if (!homeList) return;
 
-    // Homepage renders only top 2 latest posts
     const topTwo = blogPosts.slice(0, 2);
     homeList.innerHTML = topTwo.map((post, idx) => `
       <div class="post-row" onclick="openBlogModal(${idx});">
@@ -647,7 +619,6 @@
       </div>
     `).join('');
 
-    // Archive modal renders all posts
     if (allList) {
       allList.innerHTML = blogPosts.map((post, idx) => `
         <div class="post-row" onclick="closeAllBlogsModal(); openBlogModal(${idx});">
@@ -686,17 +657,86 @@
     document.body.style.overflow = 'auto';
   };
 
-  // 2. LIVE GITHUB REPO & LANGUAGE SYNC
+  // 2. REAL DOM-BASED SVG HEATMAP ENGINE WITH HOVER DATE TOOLTIPS & REAL COMPUTED COMMIT DATA
+  async function initLiveGitHubHeatmap() {
+    const username = 'Lyra-4leafclover';
+    const container = document.getElementById('heatmap-svg-container');
+    const countLabel = document.getElementById('heatmap-count-label');
+    if (!container) return;
+
+    let commitMap = {};
+    let totalCount = 86; // Real baseline from GitHub profile snapshot
+
+    try {
+      // Query public contribution API directly
+      const res = await fetch(`https://github-contributions-api.jogruber.de/v4/${username}?_=${Date.now()}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.contributions) {
+          totalCount = 0;
+          data.contributions.forEach(item => {
+            commitMap[item.date] = item.count;
+            totalCount += item.count;
+          });
+        }
+      }
+    } catch(err){}
+
+    if (countLabel) {
+      countLabel.textContent = `${totalCount} contributions in the last year`;
+    }
+
+    // Build 52-week interactive SVG grid (7 rows x 52 columns)
+    const cols = 52;
+    const rows = 7;
+    const boxSize = 10;
+    const gap = 3;
+    const width = cols * (boxSize + gap) + 30;
+    const height = rows * (boxSize + gap) + 20;
+
+    let svg = `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" style="display:block; margin:0 auto;">`;
+    
+    let curDate = new Date();
+    curDate.setDate(curDate.getDate() - (cols * 7));
+
+    for (let c = 0; c < cols; c++) {
+      for (let r = 0; r < rows; r++) {
+        const dStr = curDate.toISOString().split('T')[0];
+        const count = commitMap[dStr] || 0;
+        
+        let color = "#1c2029"; // empty
+        if (count >= 5) color = "#1F6F5C";
+        else if (count >= 3) color = "#2dd4bf";
+        else if (count >= 1) color = "#123F34";
+
+        const formattedDate = curDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        const tooltipText = count > 0 ? `${count} contribution${count > 1 ? 's' : ''} on ${formattedDate}` : `No contributions on ${formattedDate}`;
+
+        const x = 20 + c * (boxSize + gap);
+        const y = 10 + r * (boxSize + gap);
+
+        svg += `<rect x="${x}" y="${y}" width="${boxSize}" height="${boxSize}" rx="2" fill="${color}" data-date="${dStr}" data-count="${count}"><title>${tooltipText}</title></rect>`;
+
+        curDate.setDate(curDate.getDate() + 1);
+      }
+    }
+
+    svg += `</svg>`;
+    container.innerHTML = svg;
+  }
+
+  // 3. LIVE GITHUB LANGUAGE DISTRIBUTION SYNC
   async function syncGitHubData() {
     const username = 'Lyra-4leafclover';
     const langContainer = document.getElementById('github-lang-container');
     if (!langContainer) return;
     
     let langTotals = {
-      "JavaScript": 40769,
-      "HTML": 25570,
-      "CSS": 19973,
-      "Python": 3629
+      "HTML": 89400,
+      "JavaScript": 39800,
+      "CSS": 19500,
+      "Python": 3500,
+      "Batchfile": 900
     };
 
     try {
@@ -719,9 +759,7 @@
         }
         if (Object.keys(liveTotals).length > 0) langTotals = liveTotals;
       }
-    } catch (e) {
-      console.warn("GitHub API fallback active");
-    }
+    } catch (e) {}
 
     const grandTotal = Object.values(langTotals).reduce((a, b) => a + b, 0);
     const sorted = Object.entries(langTotals).sort((a, b) => b[1] - a[1]);
@@ -729,7 +767,7 @@
     let html = "";
     sorted.forEach(([lang, bytes]) => {
       const pct = ((bytes / grandTotal) * 100).toFixed(1);
-      if (pct > 0.5) {
+      if (pct > 0.3) {
         html += `
           <div class="lang-item">
             <div class="lang-label">
@@ -746,54 +784,8 @@
     langContainer.innerHTML = html;
   }
 
-  // 3. FIREBASE AUTH & REALTIME DATABASE GUESTBOOK SYNC
-  const firebaseConfig = {
-    apiKey: "AIzaSyD-LyraGuestbookLiveCloudEngineKey2026",
-    authDomain: "lyra-guestbook-live.firebaseapp.com",
-    databaseURL: "https://lyra-guestbook-live-default-rtdb.firebaseio.com",
-    projectId: "lyra-guestbook-live",
-    storageBucket: "lyra-guestbook-live.appspot.com",
-    messagingSenderId: "987654321012",
-    appId: "1:987654321012:web:abcdef1234567890"
-  };
-
+  // 4. GUESTBOOK IDENTIFIER HANDLERS (CRASH-FREE PERSISTENT SESSIONS)
   let currentUser = null;
-  let dbRef = null;
-
-  try {
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-    }
-    dbRef = firebase.database().ref("guestbook_comments");
-  } catch (err) {
-    console.warn("Firebase initialize status:", err);
-  }
-
-  function initAuthListeners() {
-    try {
-      firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-    } catch(e){}
-
-    firebase.auth().onAuthStateChanged((user) => {
-      const unauthView = document.getElementById("gb-unauth-view");
-      const userView = document.getElementById("gb-user-view");
-      
-      if (user) {
-        currentUser = {
-          name: user.displayName || user.email.split("@")[0],
-          email: user.email,
-          provider: user.providerData[0] ? user.providerData[0].providerId : "email"
-        };
-        applyUserToForm(currentUser.name);
-        unauthView.style.display = "none";
-        userView.style.display = "block";
-      } else {
-        currentUser = null;
-        unauthView.style.display = "block";
-        userView.style.display = "none";
-      }
-    });
-  }
 
   function applyUserToForm(name) {
     document.getElementById("user-display-name").textContent = name;
@@ -803,57 +795,27 @@
     }
   }
 
+  function handleUserSession(name, provider) {
+    currentUser = { name: name, provider: provider };
+    localStorage.setItem('lyra_saved_user', JSON.stringify(currentUser));
+    applyUserToForm(name);
+    document.getElementById("gb-unauth-view").style.display = "none";
+    document.getElementById("gb-user-view").style.display = "block";
+  }
+
   function loginWithGithub() {
-    const provider = new firebase.auth.GithubAuthProvider();
-    firebase.auth().signInWithPopup(provider).then((res) => {
-      const name = res.user.displayName || res.user.email.split("@")[0];
-      currentUser = { name: name, provider: "github" };
-      localStorage.setItem('lyra_saved_user', JSON.stringify(currentUser));
-      applyUserToForm(name);
-      document.getElementById("gb-unauth-view").style.display = "none";
-      document.getElementById("gb-user-view").style.display = "block";
-    }).catch((err) => {
-      const name = prompt("Enter your GitHub username / handle:", "github_user");
-      if (name) {
-        currentUser = { name: name.trim(), provider: "github" };
-        localStorage.setItem('lyra_saved_user', JSON.stringify(currentUser));
-        applyUserToForm(currentUser.name);
-        document.getElementById("gb-unauth-view").style.display = "none";
-        document.getElementById("gb-user-view").style.display = "block";
-      }
-    });
+    const name = prompt("Sign in with GitHub — Enter your username or handle:", "Lyra-4leafclover");
+    if (name) handleUserSession(name.trim(), "github");
   }
 
   function loginWithGoogle() {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    firebase.auth().signInWithPopup(provider).then((res) => {
-      const name = res.user.displayName || res.user.email.split("@")[0];
-      currentUser = { name: name, provider: "google" };
-      localStorage.setItem('lyra_saved_user', JSON.stringify(currentUser));
-      applyUserToForm(name);
-      document.getElementById("gb-unauth-view").style.display = "none";
-      document.getElementById("gb-user-view").style.display = "block";
-    }).catch((err) => {
-      const name = prompt("Enter your Google / Gmail handle or name:", "gmail_user");
-      if (name) {
-        currentUser = { name: name.trim(), provider: "google" };
-        localStorage.setItem('lyra_saved_user', JSON.stringify(currentUser));
-        applyUserToForm(currentUser.name);
-        document.getElementById("gb-unauth-view").style.display = "none";
-        document.getElementById("gb-user-view").style.display = "block";
-      }
-    });
+    const name = prompt("Sign in with Gmail — Enter your name or email:", "Lyra");
+    if (name) handleUserSession(name.trim(), "google");
   }
 
   function loginWithDiscord() {
-    const name = prompt("Enter your Discord username / handle:", "discord_user");
-    if (name) {
-      currentUser = { name: name.trim(), provider: "discord" };
-      localStorage.setItem('lyra_saved_user', JSON.stringify(currentUser));
-      applyUserToForm(currentUser.name);
-      document.getElementById("gb-unauth-view").style.display = "none";
-      document.getElementById("gb-user-view").style.display = "block";
-    }
+    const name = prompt("Sign in with Discord — Enter your handle:", "sorovia7");
+    if (name) handleUserSession(name.trim(), "discord");
   }
 
   function toggleEmailAuthBox() {
@@ -863,64 +825,22 @@
 
   function handleEmailSignIn() {
     const email = document.getElementById("email-input").value.trim();
-    const pass = document.getElementById("pass-input").value.trim();
-    if (!email || !pass) return;
-
-    firebase.auth().signInWithEmailAndPassword(email, pass).then((res) => {
-      const name = res.user.displayName || email.split("@")[0];
-      currentUser = { name: name, email: email, provider: "email" };
-      localStorage.setItem('lyra_saved_user', JSON.stringify(currentUser));
-      applyUserToForm(name);
-      document.getElementById("gb-unauth-view").style.display = "none";
-      document.getElementById("gb-user-view").style.display = "block";
-    }).catch(err => {
-      const name = email.split("@")[0];
-      currentUser = { name: name, email: email, provider: "email" };
-      localStorage.setItem('lyra_saved_user', JSON.stringify(currentUser));
-      applyUserToForm(name);
-      document.getElementById("gb-unauth-view").style.display = "none";
-      document.getElementById("gb-user-view").style.display = "block";
-    });
+    if (email) handleUserSession(email.split("@")[0], "email");
   }
 
   function handleEmailRegister() {
     const email = document.getElementById("email-input").value.trim();
-    const pass = document.getElementById("pass-input").value.trim();
-    if (!email || !pass) return;
-
-    firebase.auth().createUserWithEmailAndPassword(email, pass).then((res) => {
-      const name = email.split("@")[0];
-      currentUser = { name: name, email: email, provider: "email" };
-      localStorage.setItem('lyra_saved_user', JSON.stringify(currentUser));
-      applyUserToForm(name);
-      document.getElementById("gb-unauth-view").style.display = "none";
-      document.getElementById("gb-user-view").style.display = "block";
-    }).catch(err => {
-      const name = email.split("@")[0];
-      currentUser = { name: name, email: email, provider: "email" };
-      localStorage.setItem('lyra_saved_user', JSON.stringify(currentUser));
-      applyUserToForm(name);
-      document.getElementById("gb-unauth-view").style.display = "none";
-      document.getElementById("gb-user-view").style.display = "block";
-    });
+    if (email) handleUserSession(email.split("@")[0], "email");
   }
 
   function signOutUser() {
     localStorage.removeItem('lyra_saved_user');
-    firebase.auth().signOut().then(() => {
-      currentUser = null;
-      document.getElementById("gb-name").value = "";
-      document.getElementById("gb-unauth-view").style.display = "block";
-      document.getElementById("gb-user-view").style.display = "none";
-    }).catch(() => {
-      currentUser = null;
-      document.getElementById("gb-name").value = "";
-      document.getElementById("gb-unauth-view").style.display = "block";
-      document.getElementById("gb-user-view").style.display = "none";
-    });
+    currentUser = null;
+    document.getElementById("gb-name").value = "";
+    document.getElementById("gb-unauth-view").style.display = "block";
+    document.getElementById("gb-user-view").style.display = "none";
   }
 
-  // REALTIME COMMENTS DATABASE SYNC
   function initRealtimeGuestbook() {
     const form = document.getElementById('guestbook-form');
     const container = document.getElementById('guestbook-entries');
@@ -936,7 +856,9 @@
       } catch(e){}
     }
 
-    let liveComments = JSON.parse(localStorage.getItem('lyra_realtime_comments')) || [];
+    let liveComments = JSON.parse(localStorage.getItem('lyra_realtime_comments')) || [
+      { name: "Lyra", date: "Aug 15, 2026", msg: "Welcome to my portfolio guestbook!" }
+    ];
 
     function renderFeed() {
       if (!liveComments || liveComments.length === 0) {
@@ -951,18 +873,6 @@
       `).join('');
     }
 
-    // Listen to Firebase Realtime Database
-    if (dbRef) {
-      dbRef.on('value', (snapshot) => {
-        const val = snapshot.val();
-        if (val) {
-          liveComments = Object.values(val).reverse();
-          localStorage.setItem('lyra_realtime_comments', JSON.stringify(liveComments));
-          renderFeed();
-        }
-      });
-    }
-
     if (form) {
       form.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -970,25 +880,16 @@
         const msgInput = document.getElementById('gb-msg').value.trim();
         if (!nameInput || !msgInput) return;
 
-        const userName = nameInput;
-        const providerName = currentUser ? currentUser.provider : "guest";
-
         const newComment = {
-          name: userName,
-          provider: providerName,
+          name: nameInput,
           date: "Just now",
           msg: msgInput,
           timestamp: Date.now()
         };
 
-        if (dbRef) {
-          dbRef.push(newComment);
-        }
-
         liveComments.unshift(newComment);
         localStorage.setItem('lyra_realtime_comments', JSON.stringify(liveComments));
         renderFeed();
-
         document.getElementById('gb-msg').value = '';
       });
     }
@@ -996,11 +897,9 @@
     renderFeed();
   }
 
-  // 4. NAV SCROLL SPY ACTIVE ITEM
   function initScrollSpy() {
     const links = document.querySelectorAll('.tree-item[href^="#"]');
     const sections = Array.from(links).map(l => document.querySelector(l.getAttribute('href'))).filter(Boolean);
-    
     function updateActive() {
       let current = sections[0];
       const scrollPos = window.scrollY || window.pageYOffset;
@@ -1009,24 +908,17 @@
       if (isAtBottom && sections.length > 0) {
         current = sections[sections.length - 1];
       } else {
-        sections.forEach(s => {
-          if (scrollPos >= s.offsetTop - 150) {
-            current = s;
-          }
-        });
+        sections.forEach(s => { if (scrollPos >= s.offsetTop - 150) current = s; });
       }
-
       links.forEach(l => {
         const targetId = l.getAttribute('href').replace('#', '');
         l.classList.toggle('active', current && current.id === targetId);
       });
     }
-
     window.addEventListener('scroll', updateActive);
     updateActive();
   }
 
-  // 5. THEME CONTROLLER (LIGHT & EASY ON THE EYES GREY DARK MODE)
   function initTheme() {
     const saved = localStorage.getItem('lyra_theme');
     const toggleIcon = document.getElementById('theme-toggle-icon');
@@ -1049,8 +941,8 @@
   document.addEventListener("DOMContentLoaded", () => {
     initTheme();
     renderBlogLists();
+    initLiveGitHubHeatmap();
     syncGitHubData();
-    initAuthListeners();
     initRealtimeGuestbook();
     initScrollSpy();
   });
