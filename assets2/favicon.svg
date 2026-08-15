@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <rect width="64" height="64" rx="16" fill="#14181f"/>
+  <!-- Outer glowing accent ring -->
+  <circle cx="32" cy="32" r="24" fill="none" stroke="#1F6F5C" stroke-width="2" opacity="0.6"/>
+  <!-- Four-Leaf Clover & Constellation Emblem -->
+  <g transform="translate(32,32)">
+    <circle cx="-10" cy="-10" r="8" fill="#1F6F5C" opacity="0.75"/>
+    <circle cx="10" cy="-10" r="8" fill="#1F6F5C" opacity="0.75"/>
+    <circle cx="-10" cy="10" r="8" fill="#1F6F5C" opacity="0.75"/>
+    <circle cx="10" cy="10" r="8" fill="#1F6F5C" opacity="0.75"/>
+    <!-- 4-point Star Constellation Core -->
+    <path d="M0 -22 L4 -6 L20 0 L4 6 L0 22 L-4 6 L-20 0 L-4 -6 Z" fill="#2dd4bf"/>
+    <!-- Center Core Glow -->
+    <circle cx="0" cy="0" r="4" fill="#7FD9BE"/>
+  </g>
+</svg>
