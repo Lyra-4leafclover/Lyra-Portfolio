@@ -244,9 +244,21 @@
   }
   .guest-form input:focus, .guest-form textarea:focus{border-color:var(--teal);}
   .guest-form input{flex:1; min-width:160px;}
-  .guest-entry{padding:14px 0; border-bottom:1px solid var(--line); font-size:13.5px;}
+  .guest-entry{padding:12px 0; border-bottom:1px solid var(--line); font-size:13.5px;}
+  .guest-entry:last-child{border-bottom:none;}
   .guest-entry .who{font-family:'JetBrains Mono',monospace; font-weight:700; font-size:12.5px; color:var(--teal-deep);}
   .guest-entry .when{color:var(--ink-soft); font-size:11.5px; margin-left:6px;}
+
+  .guestbook-scroll-box{
+    max-height: 320px;
+    overflow-y: auto;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 6px 16px;
+    background: var(--paper-raised);
+  }
+  .guestbook-scroll-box::-webkit-scrollbar{ width:6px; }
+  .guestbook-scroll-box::-webkit-scrollbar-thumb{ background:var(--line); border-radius:3px; }
 
   /* ---------- contact ---------- */
   .contact-box{
@@ -498,8 +510,10 @@
         <button class="btn primary" type="submit">Sign Note ↵</button>
       </form>
 
-      <!-- LIVE COMMENTS FEED -->
-      <div id="guestbook-entries"></div>
+      <!-- LIVE COMMENTS FEED SCROLL BOX -->
+      <div class="guestbook-scroll-box">
+        <div id="guestbook-entries"></div>
+      </div>
     </section>
 
     <!-- 7. CONTACT -->
@@ -921,8 +935,11 @@
       } catch(e){}
     }
 
-    // Clean feed (no dummy comments)
-    let liveComments = JSON.parse(localStorage.getItem('lyra_realtime_comments')) || [];
+    // Clear old test comments permanently from local storage
+    if (localStorage.getItem('lyra_realtime_comments')) {
+      localStorage.removeItem('lyra_realtime_comments');
+    }
+    let liveComments = [];
 
     function renderFeed() {
       if (!liveComments || liveComments.length === 0) {
