@@ -1,8 +1,5 @@
 // Vercel Serverless Backend Database for Lyra Portfolio Guestbook
-let globalComments = [
-  { name: "Lyra", date: "Aug 16, 2026", msg: "Welcome to the global guestbook! Feel free to leave a note or feedback below.", timestamp: 1786870000000 },
-  { name: "ISHAAN", date: "Aug 16, 2026", msg: "Hey Lyra! Leaving a live note on the guestbook.", timestamp: 1786871000000 }
-];
+let globalComments = [];
 
 export default async function handler(req, res) {
   // CORS Headers

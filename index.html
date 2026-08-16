@@ -1106,25 +1106,27 @@
       } catch(e){}
     }
 
-    // 1. Dual-Layer Storage: Hybrid Local Backup & Global Cloud Database
+    // 1. Dual-Layer Storage: Hybrid Local Backup & Master Backup Engine
     let liveComments = [];
     try {
-      const stored = localStorage.getItem('lyra_persistent_guestbook') || sessionStorage.getItem('lyra_persistent_guestbook_backup');
+      const stored = localStorage.getItem('lyra_persistent_guestbook') || 
+                     localStorage.getItem('lyra_master_backup') || 
+                     sessionStorage.getItem('lyra_persistent_guestbook_backup');
       if (stored) {
         liveComments = JSON.parse(stored);
       }
     } catch(e) {}
 
-    // Default initial comments if local cache is empty
-    if (!liveComments || liveComments.length === 0) {
-      liveComments = [
-        { name: "Lyra", date: "Aug 16, 2026", msg: "Welcome to the guestbook! Feel free to leave a note or feedback below." }
-      ];
-    }
+    // Filter out old fake placeholder comments if present
+    liveComments = liveComments.filter(c => 
+      !(c.name === "Lyra" && c.msg.includes("Welcome")) && 
+      !(c.name === "ISHAAN" && c.msg.includes("Leaving a live note"))
+    );
 
     function saveLocalBackup() {
       try {
         localStorage.setItem('lyra_persistent_guestbook', JSON.stringify(liveComments));
+        localStorage.setItem('lyra_master_backup', JSON.stringify(liveComments));
         sessionStorage.setItem('lyra_persistent_guestbook_backup', JSON.stringify(liveComments));
       } catch(e) {}
     }
@@ -1152,7 +1154,7 @@
             const existingKeys = new Set(liveComments.map(c => `${c.name}_${c.msg}`));
             data.comments.forEach(cloudC => {
               const key = `${cloudC.name}_${cloudC.msg}`;
-              if (!existingKeys.has(key)) {
+              if (!existingKeys.has(key) && !(cloudC.name === "Lyra" && cloudC.msg.includes("Welcome")) && !(cloudC.name === "ISHAAN" && cloudC.msg.includes("Leaving a live note"))) {
                 liveComments.push(cloudC);
                 existingKeys.add(key);
               }
