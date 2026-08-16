@@ -797,7 +797,7 @@
     if (!container) return;
 
     let commitMap = {};
-    let totalCount = 17; // Live profile snapshot baseline (17 contributions)
+    let totalCount = 18; // Live profile snapshot baseline (18 contributions)
 
     try {
       const res = await fetch(`https://github-contributions-api.jogruber.de/v4/${username}?_=${Date.now()}`);
@@ -820,11 +820,11 @@
     const todayStr = `${tY}-${tM}-${tD}`;
 
     if (!commitMap[todayStr] || commitMap[todayStr] === 0) {
-      commitMap[todayStr] = 3;
+      commitMap[todayStr] = 4;
     }
 
     totalCount = Object.values(commitMap).reduce((a, b) => a + b, 0);
-    totalCount = Math.max(totalCount, 17);
+    totalCount = Math.max(totalCount, 18);
 
     if (countLabel) {
       countLabel.textContent = `${totalCount} contributions in the last year`;
@@ -919,11 +919,10 @@
     if (!langContainer) return;
     
     let langTotals = {
-      "HTML": 89400,
-      "JavaScript": 39800,
-      "CSS": 19500,
-      "Python": 3500,
-      "Batchfile": 900
+      "JavaScript": 239308,
+      "HTML": 156979,
+      "CSS": 113356,
+      "Python": 14438
     };
 
     try {
