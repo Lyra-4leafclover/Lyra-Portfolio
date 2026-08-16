@@ -1106,11 +1106,28 @@
       } catch(e){}
     }
 
-    // Clear old test comments permanently from local storage
-    if (localStorage.getItem('lyra_realtime_comments')) {
-      localStorage.removeItem('lyra_realtime_comments');
-    }
+    // 1. Persistent Storage Loader with Dual Backup Recovery
     let liveComments = [];
+    try {
+      const stored = localStorage.getItem('lyra_persistent_guestbook') || sessionStorage.getItem('lyra_persistent_guestbook_backup');
+      if (stored) {
+        liveComments = JSON.parse(stored);
+      }
+    } catch(e) {}
+
+    // Initial default welcome notes if guestbook is brand new
+    if (!liveComments || liveComments.length === 0) {
+      liveComments = [
+        { name: "Lyra", date: "Aug 16, 2026", msg: "Welcome to the guestbook! Feel free to leave a note or feedback below." }
+      ];
+    }
+
+    function saveCommentsToDatabase() {
+      try {
+        localStorage.setItem('lyra_persistent_guestbook', JSON.stringify(liveComments));
+        sessionStorage.setItem('lyra_persistent_guestbook_backup', JSON.stringify(liveComments));
+      } catch(e) {}
+    }
 
     function renderFeed() {
       if (!liveComments || liveComments.length === 0) {
@@ -1132,20 +1149,24 @@
         const msgInput = document.getElementById('gb-msg').value.trim();
         if (!nameInput || !msgInput) return;
 
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
         const newComment = {
           name: nameInput,
-          date: "Just now",
+          date: dateStr,
           msg: msgInput,
           timestamp: Date.now()
         };
 
         liveComments.unshift(newComment);
-        localStorage.setItem('lyra_realtime_comments', JSON.stringify(liveComments));
+        saveCommentsToDatabase();
         renderFeed();
         document.getElementById('gb-msg').value = '';
       });
     }
 
+    saveCommentsToDatabase();
     renderFeed();
   }
 
