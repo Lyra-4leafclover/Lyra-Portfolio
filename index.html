@@ -1106,7 +1106,7 @@
       } catch(e){}
     }
 
-    // 1. Persistent Storage Loader with Dual Backup Recovery
+    // 1. Dual-Layer Storage: Hybrid Local Backup & Global Cloud Database
     let liveComments = [];
     try {
       const stored = localStorage.getItem('lyra_persistent_guestbook') || sessionStorage.getItem('lyra_persistent_guestbook_backup');
@@ -1115,14 +1115,14 @@
       }
     } catch(e) {}
 
-    // Initial default welcome notes if guestbook is brand new
+    // Default initial comments if local cache is empty
     if (!liveComments || liveComments.length === 0) {
       liveComments = [
         { name: "Lyra", date: "Aug 16, 2026", msg: "Welcome to the guestbook! Feel free to leave a note or feedback below." }
       ];
     }
 
-    function saveCommentsToDatabase() {
+    function saveLocalBackup() {
       try {
         localStorage.setItem('lyra_persistent_guestbook', JSON.stringify(liveComments));
         sessionStorage.setItem('lyra_persistent_guestbook_backup', JSON.stringify(liveComments));
@@ -1142,8 +1142,30 @@
       `).join('');
     }
 
+    // 2. Sync with Global Cloud Database (/api/guestbook)
+    async function syncCloudDB() {
+      try {
+        const res = await fetch('/api/guestbook');
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.comments && data.comments.length > 0) {
+            const existingKeys = new Set(liveComments.map(c => `${c.name}_${c.msg}`));
+            data.comments.forEach(cloudC => {
+              const key = `${cloudC.name}_${cloudC.msg}`;
+              if (!existingKeys.has(key)) {
+                liveComments.push(cloudC);
+                existingKeys.add(key);
+              }
+            });
+            saveLocalBackup();
+            renderFeed();
+          }
+        }
+      } catch(err) {}
+    }
+
     if (form) {
-      form.addEventListener('submit', (e) => {
+      form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const nameInput = document.getElementById('gb-name').value.trim();
         const msgInput = document.getElementById('gb-msg').value.trim();
@@ -1159,15 +1181,26 @@
           timestamp: Date.now()
         };
 
+        // 1. Immediately render locally & save to local backup
         liveComments.unshift(newComment);
-        saveCommentsToDatabase();
+        saveLocalBackup();
         renderFeed();
         document.getElementById('gb-msg').value = '';
+
+        // 2. Post to Global Cloud Database in background
+        try {
+          await fetch('/api/guestbook', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: nameInput, msg: msgInput })
+          });
+        } catch(err) {}
       });
     }
 
-    saveCommentsToDatabase();
+    saveLocalBackup();
     renderFeed();
+    syncCloudDB();
   }
 
   function initScrollSpy() {
