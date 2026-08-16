@@ -422,8 +422,15 @@
     <!-- 4. PROJECTS -->
     <section id="projects">
       <div class="filepath">projects/index.html<div class="bar"></div></div>
-      <h2>Projects</h2>
-      <p class="section-sub">Things I built because I wanted them to exist.</p>
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px;">
+        <div>
+          <h2>Projects</h2>
+          <p class="section-sub" style="margin-bottom:16px;">Things I built because I wanted them to exist.</p>
+        </div>
+        <button type="button" class="btn ghost" onclick="openAllProjectsModal();" style="font-size:12.5px; padding:7px 13px;">
+          See all projects ↗
+        </button>
+      </div>
       <div class="project-grid">
         <div class="card">
           <div class="card-top">
@@ -586,6 +593,56 @@
       <p class="section-sub" style="margin-bottom:28px;">Weekly reflections, algorithms, project breakdowns, and CS notes.</p>
       
       <div id="all-posts-list" class="post-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- FULL SCREEN ALL PROJECTS ARCHIVE MODAL OVERLAY -->
+<div id="all-projects-modal" class="modal-overlay">
+  <div class="modal-container">
+    <button class="modal-close" onclick="closeAllProjectsModal();">&times;</button>
+    <div class="modal-content-inner">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--teal); margin-bottom:6px;">PROJECTS ARCHIVE // WORKSHOP</div>
+      <h1 style="font-size:32px; margin-bottom:6px;">All Projects</h1>
+      <p class="section-sub" style="margin-bottom:28px;">Things I built because I wanted them to exist — repositories, GUI tools, and plugins.</p>
+      
+      <div class="project-grid">
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">SCRYING MIRROR OBSIDIAN PLUGIN</div>
+            <a class="card-star" href="https://github.com/Lyra-4leafclover/Scrying-Mirror-of-Productivity-plugin-Obsidian-Plugin" target="_blank">★ 1 ↗</a>
+          </div>
+          <div class="card-desc">Official Obsidian.md plugin integration bringing the Scrying Mirror productivity hub, focus chrono telemetry, and automated log workflows directly into your vault.</div>
+          <div class="tag-row"><span class="tag">typescript</span><span class="tag">obsidian-plugin</span><span class="tag">javascript</span><span class="tag">productivity</span></div>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">SCRYING MIRROR OF PRODUCTIVITY</div>
+            <a class="card-star" href="https://github.com/Lyra-4leafclover/Scrying_Mirror_Of_Productivity" target="_blank">★ 1 ↗</a>
+          </div>
+          <div class="card-desc">Interactive obsidian mirror dashboard &amp; productivity hub featuring focus timers, telemetry analytics, study lecture theaters, and automated engineering logs.</div>
+          <div class="tag-row"><span class="tag">javascript</span><span class="tag">html</span><span class="tag">css</span><span class="tag">obsidian</span></div>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">ATELIER</div>
+            <a class="card-star" href="https://github.com/Lyra-4leafclover/atelier" target="_blank">★ 1 ↗</a>
+          </div>
+          <div class="card-desc">Personal workshop repository space tracking progress across Python codebases, Tkinter GUI quiz makers, and OpenCV algorithms.</div>
+          <div class="tag-row"><span class="tag">python</span><span class="tag">tkinter</span><span class="tag">opencv</span></div>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">ORION THE HUNTER</div>
+            <a class="card-star" href="https://github.com/Lyra-4leafclover/Orion-The-Hunter---Blog" target="_blank">★ 1 ↗</a>
+          </div>
+          <div class="card-desc">Technical engineering journal &amp; interactive website repository featuring dark obsidian liquid mirror themes and audio synthesizers.</div>
+          <div class="tag-row"><span class="tag">javascript</span><span class="tag">html</span><span class="tag">css</span></div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -787,6 +844,16 @@
 
   window.closeAllBlogsModal = function() {
     document.getElementById('all-blogs-modal').classList.remove('active');
+    document.body.style.overflow = 'auto';
+  };
+
+  window.openAllProjectsModal = function() {
+    document.getElementById('all-projects-modal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  };
+
+  window.closeAllProjectsModal = function() {
+    document.getElementById('all-projects-modal').classList.remove('active');
     document.body.style.overflow = 'auto';
   };
 
