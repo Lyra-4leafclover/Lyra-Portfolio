@@ -171,7 +171,8 @@
 
   /* LANG BARS IN HEATMAP PANEL */
   .lang-panel-box{margin-top:10px; padding-top:10px; border-top:1px solid var(--line);}
-  .lang-panel-head{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-soft); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.05em;}
+  .lang-panel-head{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-soft); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.05em; display:flex; justify-content:space-between; align-items:center;}
+  .sync-time{font-size:10px; color:var(--ink-soft); font-family:'JetBrains Mono',monospace; font-weight:400; opacity:0.7; text-transform:none;}
   .lang-item{margin-bottom:5px;}
   .lang-label{display:flex; justify-content:space-between; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink); margin-bottom:2px;}
   .lang-track{width:100%; height:3px; background:var(--line); border-radius:2px; overflow:hidden;}
@@ -383,8 +384,11 @@
       <p class="section-sub">A year of commits, rendered honestly — synced live to @Lyra-4leafclover on GitHub.</p>
       <div class="heatmap-panel">
         <div class="heatmap-head">
-          <span id="heatmap-count-label" class="count">13 contributions in the last year</span>
-          <span class="range">Aug 2025 – Aug 2026</span>
+          <span id="heatmap-count-label" class="count">— contributions in the last year</span>
+          <div style="display:flex; gap:10px; align-items:center;">
+            <span class="range">Aug 2025 – Aug 2026</span>
+            <span id="heatmap-sync-label" class="sync-time"></span>
+          </div>
         </div>
         
         <!-- FULL 52-WEEK SVG HEATMAP ENGINE IN TEAL SCHEME -->
@@ -398,7 +402,10 @@
 
         <!-- LANGUAGES SYNCED TO GITHUB -->
         <div class="lang-panel-box">
-          <div class="lang-panel-head">Codebase Language Distribution (GitHub Sync)</div>
+          <div class="lang-panel-head">
+            <span>Codebase Language Distribution (GitHub Sync)</span>
+            <span id="lang-sync-label" class="sync-time"></span>
+          </div>
           <div id="github-lang-container"></div>
         </div>
       </div>
@@ -857,14 +864,34 @@
     document.body.style.overflow = 'auto';
   };
 
+  // Shared helper — formats an ISO timestamp as a relative "X ago" string
+  function formatSyncTime(isoString) {
+    if (!isoString) return '';
+    const then = new Date(isoString);
+    const now = new Date();
+    const diffMs = now - then;
+    const diffMin = Math.floor(diffMs / 60000);
+
+    if (diffMin < 1) return 'synced just now';
+    if (diffMin < 60) return `synced ${diffMin}m ago`;
+    const diffHr = Math.floor(diffMin / 60);
+    if (diffHr < 24) return `synced ${diffHr}h ago`;
+
+    return 'synced ' + then.toLocaleString('en-US', {
+      month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit'
+    });
+  }
+
   // 2. FULL 52-WEEK DOM-BASED SVG HEATMAP ENGINE
   async function initLiveGitHubHeatmap() {
     const container = document.getElementById('heatmap-svg-container');
     const countLabel = document.getElementById('heatmap-count-label');
+    const syncLabel = document.getElementById('heatmap-sync-label');
     if (!container) return;
 
     let commitMap = {};
     let totalCount = 0;
+    let generatedAt = null;
 
     // Fetch static data synced by GitHub Action (0 API rate limits)
     try {
@@ -873,17 +900,9 @@
         const data = await res.json();
         commitMap = data.commitMap || {};
         totalCount = data.totalCount || 0;
+        generatedAt = data.generatedAt || null;
       } else {
-        const liveRes = await fetch(`https://github-contributions-api.jogruber.de/v4/Lyra-4leafclover?_=${Date.now()}`);
-        if (liveRes.ok) {
-          const liveData = await liveRes.json();
-          (liveData.contributions || []).forEach(item => {
-            if (item.count > 0) {
-              commitMap[item.date] = item.count;
-              totalCount += item.count;
-            }
-          });
-        }
+        console.error('Failed to load contributions.json:', res.status);
       }
     } catch(err){
       console.error('Contributions fetch failed:', err);
@@ -893,6 +912,12 @@
       countLabel.textContent = totalCount > 0
         ? `${totalCount} contributions in the last year`
         : `Contribution data unavailable`;
+    }
+
+    if (syncLabel) {
+      syncLabel.textContent = generatedAt
+        ? formatSyncTime(generatedAt)
+        : `Sync time unavailable`;
     }
 
     // Build 52-week SVG layout with exact margins for month labels
@@ -980,6 +1005,7 @@
   // 3. CODEBASE LANGUAGE DISTRIBUTION SYNC FROM STATIC DATA
   async function syncGitHubData() {
     const langContainer = document.getElementById('github-lang-container');
+    const langSyncLabel = document.getElementById('lang-sync-label');
     if (!langContainer) return;
 
     function renderLanguages(totals) {
@@ -1016,6 +1042,11 @@
         const data = await res.json();
         if (data && data.totals && Object.keys(data.totals).length > 0) {
           renderLanguages(data.totals);
+          if (langSyncLabel) {
+            langSyncLabel.textContent = data.generatedAt
+              ? formatSyncTime(data.generatedAt)
+              : '';
+          }
           return;
         }
       }
@@ -1024,6 +1055,7 @@
     }
 
     langContainer.innerHTML = `<div class="lang-item" style="color:var(--ink-soft); font-size:12px; font-family:'JetBrains Mono',monospace;">Couldn't load language data</div>`;
+    if (langSyncLabel) langSyncLabel.textContent = '';
   }
 
   // 4. CLEAN OAUTH SIGN-IN BUTTON HANDLERS
