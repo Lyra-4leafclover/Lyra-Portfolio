@@ -968,18 +968,65 @@
     container.innerHTML = svg;
   }
 
-  // 3. LIVE GITHUB LANGUAGE DISTRIBUTION SYNC
+  // 3. LIVE GITHUB LANGUAGE DISTRIBUTION SYNC WITH SMART CACHE & RATE-LIMIT RESILIENCE
   async function syncGitHubData() {
     const username = 'Lyra-4leafclover';
     const langContainer = document.getElementById('github-lang-container');
     if (!langContainer) return;
     
-    let langTotals = {};
+    // Baseline distribution snapshot
+    let langTotals = {
+      "JavaScript": 239308,
+      "HTML": 156979,
+      "CSS": 113356,
+      "Python": 14438
+    };
 
+    // Load cached distribution snapshot if available
+    try {
+      const cached = localStorage.getItem('lyra_github_lang_cache');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed && Object.keys(parsed).length > 0) {
+          langTotals = parsed;
+        }
+      }
+    } catch(e) {}
+
+    function renderLanguages(totals) {
+      const grandTotal = Object.values(totals).reduce((a, b) => a + b, 0);
+      if (grandTotal === 0) return;
+      const sorted = Object.entries(totals).sort((a, b) => b[1] - a[1]);
+
+      let html = "";
+      sorted.forEach(([lang, bytes]) => {
+        const pct = ((bytes / grandTotal) * 100).toFixed(1);
+        if (pct > 0.1) {
+          html += `
+            <div class="lang-item">
+              <div class="lang-label">
+                <span>${lang}</span>
+                <span>${pct}% (${(bytes/1024).toFixed(1)} KB)</span>
+              </div>
+              <div class="lang-track">
+                <div class="lang-fill" style="width: ${pct}%;"></div>
+              </div>
+            </div>
+          `;
+        }
+      });
+      langContainer.innerHTML = html;
+    }
+
+    // Initial instant render from cache/baseline
+    renderLanguages(langTotals);
+
+    // Live sync fetch from GitHub API
     try {
       const res = await fetch(`https://api.github.com/users/${username}/repos?per_page=30`);
       if (res.ok) {
         const repos = await res.json();
+        const liveTotals = {};
         for (const repo of repos) {
           if (!repo.fork) {
             try {
@@ -987,38 +1034,23 @@
               if (lRes.ok) {
                 const lData = await lRes.json();
                 for (const [l, b] of Object.entries(lData)) {
-                  langTotals[l] = (langTotals[l] || 0) + b;
+                  liveTotals[l] = (liveTotals[l] || 0) + b;
                 }
               }
             } catch (err) {}
           }
         }
+        if (Object.keys(liveTotals).length > 0) {
+          langTotals = liveTotals;
+          try {
+            localStorage.setItem('lyra_github_lang_cache', JSON.stringify(liveTotals));
+          } catch(e){}
+          renderLanguages(langTotals);
+        }
       }
-    } catch (e) {}
-
-    const grandTotal = Object.values(langTotals).reduce((a, b) => a + b, 0);
-    if (grandTotal === 0) return;
-
-    const sorted = Object.entries(langTotals).sort((a, b) => b[1] - a[1]);
-
-    let html = "";
-    sorted.forEach(([lang, bytes]) => {
-      const pct = ((bytes / grandTotal) * 100).toFixed(1);
-      if (pct > 0.1) {
-        html += `
-          <div class="lang-item">
-            <div class="lang-label">
-              <span>${lang}</span>
-              <span>${pct}% (${(bytes/1024).toFixed(1)} KB)</span>
-            </div>
-            <div class="lang-track">
-              <div class="lang-fill" style="width: ${pct}%;"></div>
-            </div>
-          </div>
-        `;
-      }
-    });
-    langContainer.innerHTML = html;
+    } catch (e) {
+      console.error('GitHub language sync error:', e);
+    }
   }
 
   // 4. CLEAN OAUTH SIGN-IN BUTTON HANDLERS
