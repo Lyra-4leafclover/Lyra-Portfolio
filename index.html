@@ -1076,9 +1076,10 @@
   async function signInWithProvider(provider) {
     if (window.supabaseClient) {
       try {
+        const redirectUrl = window.location.origin + window.location.pathname;
         const { error } = await window.supabaseClient.auth.signInWithOAuth({
           provider: provider,
-          options: { redirectTo: window.location.href }
+          options: { redirectTo: redirectUrl }
         });
         if (error) console.error('Supabase OAuth error:', error.message);
         return;
