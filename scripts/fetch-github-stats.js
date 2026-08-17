@@ -1,8 +1,7 @@
 // scripts/fetch-github-stats.js
-// Runs in GitHub Actions & local CLI. Fetches contribution + language data straight from
-// GitHub's official endpoints (GitHub HTML calendar for contributions, REST for languages)
-// and writes them to static JSON files the website can fetch with zero API rate limits
-// and zero third-party staleness.
+// Runs in GitHub Actions & local CLI. Fetches contribution + language data using GitHub's
+// authenticated GraphQL API (not the cached HTML calendar page) when GH_TOKEN is present,
+// and writes them to static JSON files the website can fetch with zero API rate limits and zero staleness.
 
 const fs = require('fs');
 const path = require('path');
@@ -11,11 +10,77 @@ const USERNAME = 'Lyra-4leafclover';
 const TOKEN = process.env.GH_TOKEN || process.env.GITHUB_TOKEN;
 
 const headers = TOKEN
-  ? { Authorization: `Bearer ${TOKEN}`, 'User-Agent': USERNAME }
-  : { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' };
+  ? {
+      Authorization: `Bearer ${TOKEN}`,
+      'User-Agent': USERNAME,
+      'Content-Type': 'application/json',
+    }
+  : {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+      'Content-Type': 'application/json',
+    };
 
-async function fetchContributions() {
-  // 1. Fetch official GitHub contributions HTML calendar directly from github.com
+// 1. FETCH CONTRIBUTIONS VIA GRAPHQL (authenticated, structured, no HTML scraping/caching issues)
+async function fetchContributionsGraphQL() {
+  const to = new Date();
+  const from = new Date(to);
+  from.setUTCDate(from.getUTCDate() - 365);
+
+  const query = `
+    query($login: String!, $from: DateTime!, $to: DateTime!) {
+      user(login: $login) {
+        contributionsCollection(from: $from, to: $to) {
+          contributionCalendar {
+            totalContributions
+            weeks {
+              contributionDays {
+                date
+                contributionCount
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  const res = await fetch('https://api.github.com/graphql', {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({
+      query,
+      variables: {
+        login: USERNAME,
+        from: from.toISOString(),
+        to: to.toISOString(),
+      },
+    }),
+  });
+
+  if (!res.ok) {
+    throw new Error(`GraphQL contributions request failed: ${res.status} ${await res.text()}`);
+  }
+
+  const json = await res.json();
+  if (json.errors) {
+    throw new Error(`GraphQL errors: ${JSON.stringify(json.errors)}`);
+  }
+
+  const calendar = json.data.user.contributionsCollection.contributionCalendar;
+  const commitMap = {};
+  for (const week of calendar.weeks) {
+    for (const day of week.contributionDays) {
+      if (day.contributionCount > 0) {
+        commitMap[day.date] = day.contributionCount;
+      }
+    }
+  }
+
+  return { commitMap, totalCount: calendar.totalContributions };
+}
+
+// Fallback HTML parser if unauthenticated local CLI run
+async function fetchContributionsHTML() {
   const res = await fetch(`https://github.com/users/${USERNAME}/contributions`, { headers });
   if (!res.ok) throw new Error(`Official GitHub contributions HTML failed: ${res.status}`);
   const html = await res.text();
@@ -27,29 +92,36 @@ async function fetchContributions() {
   }
 
   const commitMap = {};
-  // Match all calendar day data-date attributes and their component IDs
   const dayMatches = html.matchAll(/data-date="([0-9]{4}-[0-9]{2}-[0-9]{2})"[^>]*id="([^"]+)"/g);
   
   for (const match of dayMatches) {
     const dStr = match[1];
     const compId = match[2];
-    
-    // Look up tool-tip text for this specific component ID
     const ttRegex = new RegExp(`for="${compId}"[^>]*>\\s*([0-9]+)\\s+contribution`, 'i');
     const ttMatch = html.match(ttRegex);
     if (ttMatch) {
       const cnt = parseInt(ttMatch[1], 10);
-      if (cnt > 0) {
-        commitMap[dStr] = cnt;
-      }
+      if (cnt > 0) commitMap[dStr] = cnt;
     }
   }
 
-  // Double check sum
   const sumCount = Object.values(commitMap).reduce((a, b) => a + b, 0);
   if (totalCount === 0) totalCount = sumCount;
 
   return { commitMap, totalCount };
+}
+
+async function fetchContributions() {
+  if (TOKEN) {
+    try {
+      console.log('Fetching contributions via GitHub GraphQL API...');
+      return await fetchContributionsGraphQL();
+    } catch (err) {
+      console.warn('GraphQL fetch failed, falling back to HTML calendar:', err.message);
+    }
+  }
+  console.log('Fetching contributions via official GitHub HTML calendar...');
+  return await fetchContributionsHTML();
 }
 
 async function fetchLanguages() {
@@ -73,7 +145,7 @@ async function fetchLanguages() {
       for (const [lang, bytes] of Object.entries(lData)) {
         totals[lang] = (totals[lang] || 0) + bytes;
       }
-    } catch(e) {
+    } catch (e) {
       console.error(`Languages fetch error for ${repo.name}:`, e);
     }
   }
@@ -86,8 +158,8 @@ async function main() {
   fs.mkdirSync(outDir, { recursive: true });
   const generatedAt = new Date().toISOString();
 
-  console.log('Fetching official GitHub contributions calendar...');
   const { commitMap, totalCount } = await fetchContributions();
+
   fs.writeFileSync(
     path.join(outDir, 'contributions.json'),
     JSON.stringify({ commitMap, totalCount, generatedAt }, null, 2)
@@ -105,7 +177,7 @@ async function main() {
       console.log(`Wrote languages.json — ${Object.keys(totals).length} languages detected`);
     }
   } catch (err) {
-    console.warn('Language sync skipped (will update on GitHub Actions runner with GH_TOKEN):', err.message);
+    console.warn('Language sync skipped:', err.message);
   }
 }
 
