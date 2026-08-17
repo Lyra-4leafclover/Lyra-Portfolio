@@ -857,9 +857,8 @@
     document.body.style.overflow = 'auto';
   };
 
-  // 2. FULL 52-WEEK DOM-BASED SVG HEATMAP ENGINE IN SIGNATURE TEAL DESIGN
+  // 2. FULL 52-WEEK DOM-BASED SVG HEATMAP ENGINE
   async function initLiveGitHubHeatmap() {
-    const username = 'Lyra-4leafclover';
     const container = document.getElementById('heatmap-svg-container');
     const countLabel = document.getElementById('heatmap-count-label');
     if (!container) return;
@@ -867,23 +866,33 @@
     let commitMap = {};
     let totalCount = 0;
 
+    // Fetch static data synced by GitHub Action (0 API rate limits)
     try {
-      const res = await fetch(`https://github-contributions-api.jogruber.de/v4/${username}?_=${Date.now()}`);
+      const res = await fetch(`data/contributions.json?_=${Date.now()}`);
       if (res.ok) {
         const data = await res.json();
-        if (data && data.contributions) {
-          data.contributions.forEach(item => {
-            commitMap[item.date] = item.count;
-            totalCount += item.count;
+        commitMap = data.commitMap || {};
+        totalCount = data.totalCount || 0;
+      } else {
+        const liveRes = await fetch(`https://github-contributions-api.jogruber.de/v4/Lyra-4leafclover?_=${Date.now()}`);
+        if (liveRes.ok) {
+          const liveData = await liveRes.json();
+          (liveData.contributions || []).forEach(item => {
+            if (item.count > 0) {
+              commitMap[item.date] = item.count;
+              totalCount += item.count;
+            }
           });
         }
       }
     } catch(err){
-      console.error('GitHub heatmap fetch failed:', err);
+      console.error('Contributions fetch failed:', err);
     }
 
     if (countLabel) {
-      countLabel.textContent = `${totalCount} contributions in the last year`;
+      countLabel.textContent = totalCount > 0
+        ? `${totalCount} contributions in the last year`
+        : `Contribution data unavailable`;
     }
 
     // Build 52-week SVG layout with exact margins for month labels
@@ -968,16 +977,15 @@
     container.innerHTML = svg;
   }
 
-  // 3. LIVE GITHUB LANGUAGE DISTRIBUTION SYNC (100% PURE API SYNC)
+  // 3. CODEBASE LANGUAGE DISTRIBUTION SYNC FROM STATIC DATA
   async function syncGitHubData() {
-    const username = 'Lyra-4leafclover';
     const langContainer = document.getElementById('github-lang-container');
     if (!langContainer) return;
 
     function renderLanguages(totals) {
       const grandTotal = Object.values(totals).reduce((a, b) => a + b, 0);
       if (grandTotal === 0) {
-        langContainer.innerHTML = `<div class="lang-item" style="color:var(--ink-soft); font-size:12px; font-family:'JetBrains Mono',monospace;">Loading language data…</div>`;
+        langContainer.innerHTML = `<div class="lang-item" style="color:var(--ink-soft); font-size:12px; font-family:'JetBrains Mono',monospace;">No language data available</div>`;
         return;
       }
       const sorted = Object.entries(totals).sort((a, b) => b[1] - a[1]);
@@ -1002,62 +1010,20 @@
       langContainer.innerHTML = html;
     }
 
-    // 1. Show cached real data instantly if available, otherwise loading state
-    let langTotals = {};
     try {
-      const cached = localStorage.getItem('lyra_github_lang_cache');
-      if (cached) {
-        const parsed = JSON.parse(cached);
-        if (parsed && Object.keys(parsed).length > 0) {
-          langTotals = parsed;
-        }
-      }
-    } catch (e) {}
-
-    renderLanguages(langTotals);
-
-    // 2. Live sync fetch from GitHub API
-    try {
-      const res = await fetch(`https://api.github.com/users/${username}/repos?per_page=30`);
+      const res = await fetch(`data/languages.json?_=${Date.now()}`);
       if (res.ok) {
-        const repos = await res.json();
-        const liveTotals = {};
-        for (const repo of repos) {
-          if (!repo.fork) {
-            try {
-              const lRes = await fetch(repo.languages_url);
-              if (lRes.ok) {
-                const lData = await lRes.json();
-                for (const [l, b] of Object.entries(lData)) {
-                  liveTotals[l] = (liveTotals[l] || 0) + b;
-                }
-              }
-            } catch (err) {
-              console.error(`Failed to fetch languages for ${repo.name}:`, err);
-            }
-          }
-        }
-        if (Object.keys(liveTotals).length > 0) {
-          langTotals = liveTotals;
-          try {
-            localStorage.setItem('lyra_github_lang_cache', JSON.stringify(liveTotals));
-          } catch(e) {}
-          renderLanguages(langTotals);
-        } else if (Object.keys(langTotals).length === 0) {
-          langContainer.innerHTML = `<div class="lang-item" style="color:var(--ink-soft); font-size:12px; font-family:'JetBrains Mono',monospace;">No language data available</div>`;
-        }
-      } else {
-        console.error('GitHub repos fetch failed:', res.status);
-        if (Object.keys(langTotals).length === 0) {
-          langContainer.innerHTML = `<div class="lang-item" style="color:var(--ink-soft); font-size:12px; font-family:'JetBrains Mono',monospace;">Couldn't load language data (rate limit reset pending)</div>`;
+        const data = await res.json();
+        if (data && data.totals && Object.keys(data.totals).length > 0) {
+          renderLanguages(data.totals);
+          return;
         }
       }
-    } catch (e) {
-      console.error('GitHub language sync error:', e);
-      if (Object.keys(langTotals).length === 0) {
-        langContainer.innerHTML = `<div class="lang-item" style="color:var(--ink-soft); font-size:12px; font-family:'JetBrains Mono',monospace;">Couldn't load language data</div>`;
-      }
+    } catch (err) {
+      console.error('Language data fetch failed:', err);
     }
+
+    langContainer.innerHTML = `<div class="lang-item" style="color:var(--ink-soft); font-size:12px; font-family:'JetBrains Mono',monospace;">Couldn't load language data</div>`;
   }
 
   // 4. CLEAN OAUTH SIGN-IN BUTTON HANDLERS
