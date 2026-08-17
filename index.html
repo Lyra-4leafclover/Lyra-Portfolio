@@ -1229,9 +1229,10 @@
     liveComments = liveComments.filter(c => 
       !(c.name === "Lyra" && c.msg.includes("Welcome")) && 
       !(c.name === "ISHAAN" && c.msg.includes("Leaving a live note")) &&
-      !(c.name && c.name.includes("quantinium")) &&
+      !(c.name && c.name.toLowerCase().includes("quantinium")) &&
       !(c.msg && c.msg.trim().toLowerCase() === "sup")
     );
+    saveLocalBackup();
 
     function saveLocalBackup() {
       try {
