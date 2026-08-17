@@ -868,7 +868,7 @@
 
     // Fetch static data synced by GitHub Action (0 API rate limits)
     try {
-      const res = await fetch(`data/contributions.json?_=${Date.now()}`);
+      const res = await fetch(`/data/contributions.json?_=${Date.now()}`);
       if (res.ok) {
         const data = await res.json();
         commitMap = data.commitMap || {};
@@ -1011,7 +1011,7 @@
     }
 
     try {
-      const res = await fetch(`data/languages.json?_=${Date.now()}`);
+      const res = await fetch(`/data/languages.json?_=${Date.now()}`);
       if (res.ok) {
         const data = await res.json();
         if (data && data.totals && Object.keys(data.totals).length > 0) {
