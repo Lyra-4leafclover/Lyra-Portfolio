@@ -1260,7 +1260,7 @@
             .from('comments')
             .select('*')
             .order('timestamp', { ascending: false });
-          if (!error && data && data.length > 0) {
+          if (!error && data) {
             liveComments = data;
             saveLocalBackup();
             renderFeed();
@@ -1271,12 +1271,12 @@
       return false;
     }
 
-    // Realtime channel subscription for instant comment posts
+    // Realtime channel subscription for instant comment posts & deletions
     if (window.supabaseClient) {
       try {
         window.supabaseClient
           .channel('comments-changes')
-          .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'comments' }, () => {
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'comments' }, () => {
             loadSupabaseComments();
           })
           .subscribe();
