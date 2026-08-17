@@ -968,34 +968,18 @@
     container.innerHTML = svg;
   }
 
-  // 3. LIVE GITHUB LANGUAGE DISTRIBUTION SYNC WITH SMART CACHE & RATE-LIMIT RESILIENCE
+  // 3. LIVE GITHUB LANGUAGE DISTRIBUTION SYNC (100% PURE API SYNC)
   async function syncGitHubData() {
     const username = 'Lyra-4leafclover';
     const langContainer = document.getElementById('github-lang-container');
     if (!langContainer) return;
-    
-    // Baseline distribution snapshot
-    let langTotals = {
-      "JavaScript": 239308,
-      "HTML": 156979,
-      "CSS": 113356,
-      "Python": 14438
-    };
-
-    // Load cached distribution snapshot if available
-    try {
-      const cached = localStorage.getItem('lyra_github_lang_cache');
-      if (cached) {
-        const parsed = JSON.parse(cached);
-        if (parsed && Object.keys(parsed).length > 0) {
-          langTotals = parsed;
-        }
-      }
-    } catch(e) {}
 
     function renderLanguages(totals) {
       const grandTotal = Object.values(totals).reduce((a, b) => a + b, 0);
-      if (grandTotal === 0) return;
+      if (grandTotal === 0) {
+        langContainer.innerHTML = `<div class="lang-item" style="color:var(--ink-soft); font-size:12px; font-family:'JetBrains Mono',monospace;">Loading language data…</div>`;
+        return;
+      }
       const sorted = Object.entries(totals).sort((a, b) => b[1] - a[1]);
 
       let html = "";
@@ -1006,7 +990,7 @@
             <div class="lang-item">
               <div class="lang-label">
                 <span>${lang}</span>
-                <span>${pct}% (${(bytes/1024).toFixed(1)} KB)</span>
+                <span>${pct}% (${(bytes / 1024).toFixed(1)} KB)</span>
               </div>
               <div class="lang-track">
                 <div class="lang-fill" style="width: ${pct}%;"></div>
@@ -1018,10 +1002,21 @@
       langContainer.innerHTML = html;
     }
 
-    // Initial instant render from cache/baseline
+    // 1. Show cached real data instantly if available, otherwise loading state
+    let langTotals = {};
+    try {
+      const cached = localStorage.getItem('lyra_github_lang_cache');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed && Object.keys(parsed).length > 0) {
+          langTotals = parsed;
+        }
+      }
+    } catch (e) {}
+
     renderLanguages(langTotals);
 
-    // Live sync fetch from GitHub API
+    // 2. Live sync fetch from GitHub API
     try {
       const res = await fetch(`https://api.github.com/users/${username}/repos?per_page=30`);
       if (res.ok) {
@@ -1037,19 +1032,31 @@
                   liveTotals[l] = (liveTotals[l] || 0) + b;
                 }
               }
-            } catch (err) {}
+            } catch (err) {
+              console.error(`Failed to fetch languages for ${repo.name}:`, err);
+            }
           }
         }
         if (Object.keys(liveTotals).length > 0) {
           langTotals = liveTotals;
           try {
             localStorage.setItem('lyra_github_lang_cache', JSON.stringify(liveTotals));
-          } catch(e){}
+          } catch(e) {}
           renderLanguages(langTotals);
+        } else if (Object.keys(langTotals).length === 0) {
+          langContainer.innerHTML = `<div class="lang-item" style="color:var(--ink-soft); font-size:12px; font-family:'JetBrains Mono',monospace;">No language data available</div>`;
+        }
+      } else {
+        console.error('GitHub repos fetch failed:', res.status);
+        if (Object.keys(langTotals).length === 0) {
+          langContainer.innerHTML = `<div class="lang-item" style="color:var(--ink-soft); font-size:12px; font-family:'JetBrains Mono',monospace;">Couldn't load language data (rate limit reset pending)</div>`;
         }
       }
     } catch (e) {
       console.error('GitHub language sync error:', e);
+      if (Object.keys(langTotals).length === 0) {
+        langContainer.innerHTML = `<div class="lang-item" style="color:var(--ink-soft); font-size:12px; font-family:'JetBrains Mono',monospace;">Couldn't load language data</div>`;
+      }
     }
   }
 
