@@ -113,7 +113,7 @@
   .status-dot{width:7px; height:7px; border-radius:50%; background:var(--teal);}
 
   /* ---------- main content ---------- */
-  main{padding:48px 56px 80px;}
+  main{padding:48px 56px 80px; min-width:0;}
   @media (max-width:860px){ main{padding:32px 22px 60px;} }
   section{padding-top:36px; margin-top:36px;}
   section:first-child{padding-top:0; margin-top:0;}
@@ -165,6 +165,7 @@
   .heatmap-svg-box{
     width:100%; overflow-x:auto; padding:2px 0; text-align:center;
   }
+  @media (min-width:600px){ .heatmap-svg-box svg{max-width:100%; height:auto;} }
   .heatmap-svg-box svg text{
     fill: var(--ink-soft);
     font-family: 'JetBrains Mono', monospace;
@@ -298,6 +299,7 @@
   .contact-box .line{font-family:'JetBrains Mono',monospace; font-size:14px; margin-top:6px;}
   .contact-box a{color:var(--teal); text-decoration:none;}
   .contact-box a:hover{text-decoration:underline;}
+  .contact-box .line{overflow-wrap:anywhere;}
   footer{margin-top:40px; font-size:12px; color:var(--ink-soft); text-align:center;}
 
   /* ---------- FULL SCREEN MODAL OVERLAY ---------- */
@@ -336,6 +338,35 @@
   .modal-body pre{
     background:var(--code-bg); border:1px solid var(--code-line); padding:16px; border-radius:8px;
     overflow-x:auto; color:#DADCE2; font-family:'JetBrains Mono',monospace; font-size:13px; margin:16px 0;
+  }
+
+  /* ---------- small screens ---------- */
+  @media (max-width:860px){
+    .shell{grid-template-columns:minmax(0,1fr);}
+    .sidebar{min-width:0; position:relative; height:auto; overflow:visible; border-right:none; border-bottom:1px solid var(--line); padding:18px 22px 12px;}
+    .brand-sub{margin-bottom:12px; padding-right:110px;}
+    .tree{display:flex; gap:4px; overflow-x:auto; white-space:nowrap; scrollbar-width:none; margin:0 -22px; padding:0 22px;}
+    .tree::-webkit-scrollbar{display:none;}
+    .tree-group-label{display:none;}
+    .tree-item{flex-shrink:0; padding:6px 10px !important;}
+    .sidebar-foot{display:flex; gap:14px; flex-wrap:wrap; align-items:center; margin-top:10px; padding-top:10px;}
+    .sidebar-foot .status-line{margin-top:0;}
+  }
+  @media (max-width:520px){
+    main{padding:26px 16px 48px;}
+    .sidebar{padding:16px 16px 10px;}
+    .tree{margin:0 -16px; padding:0 16px;}
+    h1{font-size:28px;}
+    .hero-top{gap:18px;}
+    .hero-text{min-width:0;}
+    .card{padding:16px;}
+    .card-top{flex-wrap:wrap;}
+    .heatmap-panel{padding:12px;}
+    .guest-form input{min-width:0;}
+    .modal-container{padding:64px 16px;}
+    .modal-close{top:14px; right:14px;}
+    .modal-content-inner h1{font-size:26px !important;}
+    .theme-toggle-btn{top:14px; right:14px;}
   }
 </style>
 </head>
@@ -1124,6 +1155,7 @@
 
     svg += `</svg>`;
     container.innerHTML = svg;
+    container.scrollLeft = container.scrollWidth;
   }
 
   // 3. CODEBASE LANGUAGE DISTRIBUTION SYNC FROM STATIC DATA
