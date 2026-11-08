@@ -113,7 +113,7 @@
   .status-dot{width:7px; height:7px; border-radius:50%; background:var(--teal);}
 
   /* ---------- main content ---------- */
-  main{padding:48px 56px 80px;}
+  main{padding:48px 56px 80px; min-width:0;}
   @media (max-width:860px){ main{padding:32px 22px 60px;} }
   section{padding-top:36px; margin-top:36px;}
   section:first-child{padding-top:0; margin-top:0;}
@@ -165,6 +165,7 @@
   .heatmap-svg-box{
     width:100%; overflow-x:auto; padding:2px 0; text-align:center;
   }
+  @media (min-width:600px){ .heatmap-svg-box svg{max-width:100%; height:auto;} }
   .heatmap-svg-box svg text{
     fill: var(--ink-soft);
     font-family: 'JetBrains Mono', monospace;
@@ -211,6 +212,9 @@
   .card:hover{border-color:var(--teal); transform:translateY(-2px);}
   .card-top{display:flex; justify-content:space-between; align-items:flex-start; gap:10px;}
   .card-title{font-family:'JetBrains Mono',monospace; font-weight:700; font-size:15px;}
+  .card-links{display:flex; gap:12px; align-items:center; white-space:nowrap;}
+  .card-live{font-size:12px; color:var(--teal); font-family:'JetBrains Mono',monospace; text-decoration:none; font-weight:600;}
+  .card-live:hover{text-decoration:underline;}
   .card-star{font-size:12px; color:var(--ink-soft); font-family:'JetBrains Mono',monospace; text-decoration:none;}
   .card-desc{font-size:13.5px; color:var(--ink-soft); margin-top:8px; min-height:38px;}
   .tag-row{display:flex; gap:6px; margin-top:14px; flex-wrap:wrap;}
@@ -295,6 +299,7 @@
   .contact-box .line{font-family:'JetBrains Mono',monospace; font-size:14px; margin-top:6px;}
   .contact-box a{color:var(--teal); text-decoration:none;}
   .contact-box a:hover{text-decoration:underline;}
+  .contact-box .line{overflow-wrap:anywhere;}
   footer{margin-top:40px; font-size:12px; color:var(--ink-soft); text-align:center;}
 
   /* ---------- FULL SCREEN MODAL OVERLAY ---------- */
@@ -333,6 +338,36 @@
   .modal-body pre{
     background:var(--code-bg); border:1px solid var(--code-line); padding:16px; border-radius:8px;
     overflow-x:auto; color:#DADCE2; font-family:'JetBrains Mono',monospace; font-size:13px; margin:16px 0;
+  }
+
+  /* ---------- small screens ---------- */
+  @media (max-width:860px){
+    .shell{grid-template-columns:minmax(0,1fr);}
+    .sidebar{min-width:0; position:relative; height:auto; overflow:visible; border-right:none; border-bottom:1px solid var(--line); padding:18px 22px 12px;}
+    .brand-sub{margin-bottom:12px; padding-right:110px;}
+    .tree{display:flex; gap:4px; overflow-x:auto; white-space:nowrap; scrollbar-width:none; margin:0 -22px; padding:0 22px;}
+    .tree::-webkit-scrollbar{display:none;}
+    .tree-group-label{display:none;}
+    .tree-item{flex-shrink:0; padding:6px 10px !important;}
+    .sidebar-foot{display:flex; gap:14px; flex-wrap:wrap; align-items:center; margin-top:10px; padding-top:10px;}
+    .sidebar-foot .status-line{margin-top:0;}
+  }
+  @media (max-width:520px){
+    main{padding:26px 16px 48px;}
+    .sidebar{padding:16px 16px 10px;}
+    .tree{margin:0 -16px; padding:0 16px;}
+    h1{font-size:28px;}
+    .hero-top{gap:18px;}
+    .hero-text{min-width:0;}
+    .card{padding:16px;}
+    .card-top{flex-wrap:wrap;}
+    .heatmap-panel{padding:12px;}
+    .guest-form input{min-width:0;}
+    .modal-container{padding:64px 16px;}
+    .modal-close{top:14px; right:14px;}
+    .modal-content-inner h1{font-size:26px !important;}
+    .theme-toggle-btn{top:14px; right:14px;}
+    section > div[style*="justify-content:space-between"]{margin-bottom:14px;}
   }
 </style>
 </head>
@@ -452,6 +487,60 @@
         </button>
       </div>
       <div class="project-grid">
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">MARGINALIA</div>
+            <div class="card-links"><a class="card-live" href="https://lyra-4leafclover.github.io/marginalia/" target="_blank">live ↗</a><a class="card-star" href="https://github.com/Lyra-4leafclover/marginalia" target="_blank">★ 0 ↗</a></div>
+          </div>
+          <div class="card-desc">Every paragraph of a research paper explained in the margins, plus a Research Compass that finds the right papers for your own topic.</div>
+          <div class="tag-row"><span class="tag">javascript</span><span class="tag">html</span><span class="tag">css</span><span class="tag">research</span></div>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">CLOVER ATLAS</div>
+            <div class="card-links"><a class="card-live" href="https://clover-atlas-eight.vercel.app" target="_blank">live ↗</a><a class="card-star" href="https://github.com/Lyra-4leafclover/clover-atlas" target="_blank">★ 0 ↗</a></div>
+          </div>
+          <div class="card-desc">Turn a word or your syllabus into a branching study roadmap with prerequisites, check-offs, and free &amp; paid resources for every concept.</div>
+          <div class="tag-row"><span class="tag">javascript</span><span class="tag">python</span><span class="tag">html</span><span class="tag">css</span></div>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">PEAKDSA</div>
+            <div class="card-links"><!-- live link: add <a class="card-live" href="URL" target="_blank">live ↗</a> here --><a class="card-star" href="https://github.com/Lyra-4leafclover/peak-dsa" target="_blank">★ 0 ↗</a></div>
+          </div>
+          <div class="card-desc">Learn data structures &amp; algorithms with dead-simple visuals and line-by-line Python step-through.</div>
+          <div class="tag-row"><span class="tag">javascript</span><span class="tag">python</span><span class="tag">pyodide</span><span class="tag">dsa</span></div>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">INK GARDEN 墨园</div>
+            <div class="card-links"><a class="card-live" href="https://lyra-4leafclover.github.io/ink-garden-hsk/" target="_blank">live ↗</a><a class="card-star" href="https://github.com/Lyra-4leafclover/ink-garden-hsk" target="_blank">★ 0 ↗</a></div>
+          </div>
+          <div class="card-desc">An aesthetic HSK 1–6 Chinese learning website.</div>
+          <div class="tag-row"><span class="tag">javascript</span><span class="tag">python</span><span class="tag">html</span><span class="tag">css</span><span class="tag">chinese</span></div>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">CLOVER PLANNER</div>
+            <div class="card-links"><a class="card-live" href="https://clover-planner-seven.vercel.app" target="_blank">live ↗</a><a class="card-star" href="https://github.com/Lyra-4leafclover/clover-planner" target="_blank">★ 0 ↗</a></div>
+          </div>
+          <div class="card-desc">Make a realistic day-by-day study plan for any exams.</div>
+          <div class="tag-row"><span class="tag">javascript</span><span class="tag">html</span><span class="tag">css</span></div>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">CANDLELIT</div>
+            <div class="card-links"><a class="card-live" href="https://candle-lit-ten.vercel.app" target="_blank">live ↗</a><a class="card-star" href="https://github.com/Lyra-4leafclover/CandleLit" target="_blank">★ 1 ↗</a></div>
+          </div>
+          <div class="card-desc">A cozy Pomodoro timer where your candle melts while you focus, and every finished session goes onto a cake you get to keep.</div>
+          <div class="tag-row"><span class="tag">javascript</span><span class="tag">python</span><span class="tag">html</span><span class="tag">css</span><span class="tag">pomodoro</span></div>
+        </div>
+
         <div class="card">
           <div class="card-top">
             <div class="card-title">SCRYING MIRROR OBSIDIAN PLUGIN</div>
@@ -581,6 +670,7 @@
       <div class="contact-box">
         <div class="prompt">$ cat contact.sh</div>
         <div class="line">x → <a href="https://x.com/Lyra_void" target="_blank">x.com/Lyra_void</a></div>
+        <div class="line">connections → <a href="https://x.com/Nevis_777" target="_blank">x.com/Nevis_777</a></div>
         <div class="line">github → <a href="https://github.com/Lyra-4leafclover" target="_blank">github.com/Lyra-4leafclover</a></div>
         <div class="line">discord → <span style="color:#7FD9BE;">sorovia7</span></div>
       </div>
@@ -626,6 +716,60 @@
       <p class="section-sub" style="margin-bottom:28px;">Things I built because I wanted them to exist — repositories, GUI tools, and plugins.</p>
       
       <div class="project-grid">
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">MARGINALIA</div>
+            <div class="card-links"><a class="card-live" href="https://lyra-4leafclover.github.io/marginalia/" target="_blank">live ↗</a><a class="card-star" href="https://github.com/Lyra-4leafclover/marginalia" target="_blank">★ 0 ↗</a></div>
+          </div>
+          <div class="card-desc">Every paragraph of a research paper explained in the margins, plus a Research Compass that finds the right papers for your own topic.</div>
+          <div class="tag-row"><span class="tag">javascript</span><span class="tag">html</span><span class="tag">css</span><span class="tag">research</span></div>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">CLOVER ATLAS</div>
+            <div class="card-links"><a class="card-live" href="https://clover-atlas-eight.vercel.app" target="_blank">live ↗</a><a class="card-star" href="https://github.com/Lyra-4leafclover/clover-atlas" target="_blank">★ 0 ↗</a></div>
+          </div>
+          <div class="card-desc">Turn a word or your syllabus into a branching study roadmap with prerequisites, check-offs, and free &amp; paid resources for every concept.</div>
+          <div class="tag-row"><span class="tag">javascript</span><span class="tag">python</span><span class="tag">html</span><span class="tag">css</span></div>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">PEAKDSA</div>
+            <div class="card-links"><!-- live link: add <a class="card-live" href="URL" target="_blank">live ↗</a> here --><a class="card-star" href="https://github.com/Lyra-4leafclover/peak-dsa" target="_blank">★ 0 ↗</a></div>
+          </div>
+          <div class="card-desc">Learn data structures &amp; algorithms with dead-simple visuals and line-by-line Python step-through.</div>
+          <div class="tag-row"><span class="tag">javascript</span><span class="tag">python</span><span class="tag">pyodide</span><span class="tag">dsa</span></div>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">INK GARDEN 墨园</div>
+            <div class="card-links"><a class="card-live" href="https://lyra-4leafclover.github.io/ink-garden-hsk/" target="_blank">live ↗</a><a class="card-star" href="https://github.com/Lyra-4leafclover/ink-garden-hsk" target="_blank">★ 0 ↗</a></div>
+          </div>
+          <div class="card-desc">An aesthetic HSK 1–6 Chinese learning website.</div>
+          <div class="tag-row"><span class="tag">javascript</span><span class="tag">python</span><span class="tag">html</span><span class="tag">css</span><span class="tag">chinese</span></div>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">CLOVER PLANNER</div>
+            <div class="card-links"><a class="card-live" href="https://clover-planner-seven.vercel.app" target="_blank">live ↗</a><a class="card-star" href="https://github.com/Lyra-4leafclover/clover-planner" target="_blank">★ 0 ↗</a></div>
+          </div>
+          <div class="card-desc">Make a realistic day-by-day study plan for any exams.</div>
+          <div class="tag-row"><span class="tag">javascript</span><span class="tag">html</span><span class="tag">css</span></div>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">CANDLELIT</div>
+            <div class="card-links"><a class="card-live" href="https://candle-lit-ten.vercel.app" target="_blank">live ↗</a><a class="card-star" href="https://github.com/Lyra-4leafclover/CandleLit" target="_blank">★ 1 ↗</a></div>
+          </div>
+          <div class="card-desc">A cozy Pomodoro timer where your candle melts while you focus, and every finished session goes onto a cake you get to keep.</div>
+          <div class="tag-row"><span class="tag">javascript</span><span class="tag">python</span><span class="tag">html</span><span class="tag">css</span><span class="tag">pomodoro</span></div>
+        </div>
+
         <div class="card">
           <div class="card-top">
             <div class="card-title">SCRYING MIRROR OBSIDIAN PLUGIN</div>
@@ -1012,6 +1156,7 @@
 
     svg += `</svg>`;
     container.innerHTML = svg;
+    container.scrollLeft = container.scrollWidth;
   }
 
   // 3. CODEBASE LANGUAGE DISTRIBUTION SYNC FROM STATIC DATA
