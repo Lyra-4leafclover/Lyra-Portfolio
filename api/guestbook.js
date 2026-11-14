@@ -2,23 +2,11 @@
 let globalComments = [];
 
 export default async function handler(req, res) {
-  // CORS Headers
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-  res.setHeader(
-    'Access-Control-Allow-Headers',
-    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
-  );
-
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-
   if (req.method === 'POST') {
     try {
       const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
-      const { name, msg } = body || {};
+      const name = String(body?.name ?? '').trim().slice(0, 40);
+      const msg = String(body?.msg ?? '').trim().slice(0, 500);
 
       if (!name || !msg) {
         return res.status(400).json({ error: 'Name and message are required' });
@@ -26,16 +14,17 @@ export default async function handler(req, res) {
 
       const dateStr = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
       const newComment = {
-        name: name.trim(),
-        msg: msg.trim(),
+        name,
+        msg,
         date: dateStr,
         timestamp: Date.now()
       };
 
       globalComments.unshift(newComment);
+      globalComments = globalComments.slice(0, 200);
       return res.status(200).json({ success: true, comments: globalComments });
     } catch(err) {
-      return res.status(500).json({ error: err.message });
+      return res.status(400).json({ error: 'Bad request' });
     }
   }
 
