@@ -562,8 +562,8 @@
 
       <!-- ALWAYS-VISIBLE COMMENT FORM -->
       <form id="guestbook-form" class="guest-form">
-        <input type="text" id="gb-name" placeholder="Your name / handle" required />
-        <input type="text" id="gb-msg" placeholder="Say something..." style="flex:2;" required />
+        <input type="text" id="gb-name" maxlength="40" placeholder="Your name / handle" required />
+        <input type="text" id="gb-msg" maxlength="500" placeholder="Say something..." style="flex:2;" required />
         <button class="btn primary" type="submit">Sign Note ↵</button>
       </form>
 
@@ -1312,6 +1312,9 @@
       } catch(e) {}
     }
 
+    // guestbook text comes from visitors, so it must never be inserted as HTML
+    const escGb = (v) => String(v ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+
     function renderFeed() {
       if (!liveComments || liveComments.length === 0) {
         container.innerHTML = '<div style="color:var(--ink-soft); font-size:13px; padding:16px 0; font-family:\'JetBrains Mono\',monospace;">No notes yet. Be the first to leave one!</div>';
@@ -1319,8 +1322,8 @@
       }
       container.innerHTML = liveComments.map(e => `
         <div class="guest-entry">
-          <span class="who">${e.name}</span><span class="when">${e.date}</span>
-          <div style="margin-top:4px;">${e.msg}</div>
+          <span class="who">${escGb(e.name)}</span><span class="when">${escGb(e.date)}</span>
+          <div style="margin-top:4px;">${escGb(e.msg)}</div>
         </div>
       `).join('');
     }
